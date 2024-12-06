@@ -1,18 +1,18 @@
-import {Request, Response} from 'express';
+import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import {User} from '@/models/User';
-import {config} from '@/config/env';
+import {User} from '../models/User';
+import {config} from '../config/env';
 
 // TODO: input validation
 
 export const authController = {
     async register(req: Request, res: Response) {
         try {
-            const {username, email, password} = req.body;
+            const { username, email, password, isAdmin } = req.body;
 
             // Check if user exists
             const existingUser = await User.findOne({
-                $or: [{email}, {username}]
+                $or: [{ email }, { username }]
             });
 
             if (existingUser) {
@@ -21,55 +21,59 @@ export const authController = {
                 });
             }
 
-            // Create new user
-            const user = new User({username, email, password});
+            const user = new User({
+                username,
+                email,
+                password,
+                isAdmin: Boolean(isAdmin)
+            });
             await user.save();
 
             // Generate token
             const token = jwt.sign(
-                {userId: user._id},
+                { userId: user._id},
                 config.jwtSecret,
-                {expiresIn: '24h'}
+                { expiresIn: '24h' }
             );
 
             // Return user (without password) and token
-            const {password: _, ...userResponse} = user.toObject();
-            res.status(201).json({user: userResponse, token});
+            const { password: _, ...userResponse } = user.toObject();
+            res.status(201).json({ user: userResponse, token });
         } catch (error) {
             console.error('Register error:', error);
-            res.status(400).json({error: (error as Error).message});
+            res.status(400).json({ error: (error as Error).message });
         }
     },
 
     async login(req: Request, res: Response) {
         try {
-            const {email, password} = req.body;
+            const { email, password } = req.body;
 
             // Find user
-            const user = await User.findOne({email});
+            const user = await User.findOne({ email });
             if (!user) {
-                return res.status(401).json({error: 'Invalid credentials'});
+                return res.status(401).json({ error: 'Invalid credentials' });
             }
 
             // Check password
             const isMatch = await user.comparePassword(password);
             if (!isMatch) {
-                return res.status(401).json({error: 'Invalid credentials'});
+                return res.status(401).json({ error: 'Invalid credentials' });
             }
 
             // Generate token
             const token = jwt.sign(
-                {userId: user._id},
+                { userId: user._id},
                 config.jwtSecret,
-                {expiresIn: '24h'}
+                { expiresIn: '24h' }
             );
 
             // Return user (without password) and token
-            const {password: _, ...userResponse} = user.toObject()
-            res.json({user: userResponse, token});
+            const { password: _, ...userResponse } = user.toObject();
+            res.json({ user: userResponse, token });
         } catch (error) {
             console.error('Login error:', error);
-            res.status(400).json({error: (error as Error).message});
+            res.status(400).json({ error: (error as Error).message });
         }
     }
 };
