@@ -5,6 +5,8 @@ export interface IUser extends mongoose.Document {
     username: string;
     email: string;
     password: string;
+    isAdmin: boolean;
+    following: mongoose.Types.ObjectId[];
 
     comparePassword(candidatePassword: string): Promise<boolean>;
 }
@@ -28,6 +30,10 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    following: {
+        type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+        default: []
+    }
 
     // TODO: profile picture and following
 

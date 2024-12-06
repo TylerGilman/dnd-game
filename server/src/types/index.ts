@@ -4,8 +4,7 @@ export interface User {
   username: string;
   email: string;
   password: string;
-  friends: string[];
-  gameInvites: string[];
+  following: User[];
 }
 
 export interface Game {
