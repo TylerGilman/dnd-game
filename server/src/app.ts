@@ -5,6 +5,8 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import { config } from './config/env';
 import authRoutes from './routes/auth.routes';
+import postRoutes from "./routes/post.routes";
+import commentRoutes from "./routes/comment.routes";
 
 const app = express();
 const httpServer = createServer(app);
@@ -29,6 +31,8 @@ app.use((req, res, next) => {
 
 // Mount auth routes
 app.use('/api/auth', authRoutes);
+app.use('/api/posts', postRoutes);
+app.use('/api/comments', commentRoutes);
 
 // Test route
 app.get('/test', (req, res) => {
