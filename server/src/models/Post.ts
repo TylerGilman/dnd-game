@@ -57,3 +57,4 @@ const postSchema = new mongoose.Schema({
 
 postSchema.plugin(AutoIncrement, { inc_field: 'pid'});
 export const Post = mongoose.model<IPost>("Post", postSchema);
+
