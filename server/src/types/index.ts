@@ -8,16 +8,6 @@ export interface User {
   following: User[];
 }
 
-//
-// export interface Game {
-//   id: string;
-//   name: string;
-//   dungeonMaster: string;
-//   players: string[];
-//   status: 'waiting' | 'active' | 'completed';
-//   currentScene: string;
-// }
-
 // TODO: image of each post
 export interface Post {
   pid: number;
@@ -29,6 +19,7 @@ export interface Post {
   upvoteBy: User[];
   isHidden: boolean;
   createdAt: number;
+  updatedAt: number;
 }
 
 export interface Comment {

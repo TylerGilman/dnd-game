@@ -14,6 +14,7 @@ export interface IPost extends mongoose.Document{
     upvoteBy: mongoose.Types.ObjectId[];
     isHidden: boolean;
     createdAt: Date;
+    updatedAt: Date;
 }
 
 const postSchema = new mongoose.Schema({

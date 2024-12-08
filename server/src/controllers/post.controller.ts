@@ -1,5 +1,6 @@
 import {Request, Response} from 'express';
 import {Post} from '../models/Post';
+import {User} from "../models/User";
 import {AuthRequest} from "../middleware/auth";
 import mongoose from "mongoose";
 
@@ -40,7 +41,7 @@ export const postController = {
             if (!pid) {
                 return res.status(400).json({error: 'Post ID is required.'});
             }
-            const post = await Post.findOne({pid}).populate('user', 'username email');
+            const post = await Post.findOne({pid}).populate('user', 'username');
             if (!post) {
                 return res.status(404).json({error: 'Post not found.'});
             }
@@ -63,15 +64,24 @@ export const postController = {
         }
     },
 
-
     async getPosts(req: AuthRequest, res: Response) {
         try {
             const userId = req.user?.userId;
             const isAuthenticated = !!userId;
-            const query = isAuthenticated ? {} : {isHidden: {$ne: true}};
+            const followingOnly = req.body.followingOnly === true;
+            let query = {};
+            if (!isAuthenticated) {
+                query = {isHidden: {$ne: true}};
+            } else if (followingOnly) {
+                const loggedInUser = await User.findById(userId).select('following');
+                if (!loggedInUser) {
+                    return res.status(404).json({error: 'User not found.'});
+                }
+                query = {user: {$in: loggedInUser.following}};
+            }
             const posts = await Post.find(query)
                 .sort({createdAt: -1})
-                .populate('user', 'username email');
+                .populate('user', 'username')
             const sanitizedPosts = posts.map((post) => {
                 const upvoteCount = post.upvoteBy.length;
                 const isUpvoted = isAuthenticated ? post.upvoteBy.some((id) => id.toString() === userId) : false;
@@ -106,7 +116,7 @@ export const postController = {
                     {title: {$regex: searchRegex}},
                     {description: {$regex: searchRegex}}
                 ]
-            }).populate('user', 'username email');
+            }).populate('user', 'username');
 
             const sanatizedResults = results.map((post) => {
                 const upvoteCount = post.upvoteBy.length;
