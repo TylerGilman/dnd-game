@@ -9,9 +9,9 @@ router.post('/create', auth, postController.createPost);
 router.get('/search', authOptional, postController.searchPosts);
 //@ts-ignore
 router.get('/:pid', authOptional, postController.getPost);
-
+//@ts-ignore
 router.get('/', authOptional, postController.getPosts);
-
+//@ts-ignore
 router.put('/:pid', auth, postController.updatePost);
 //@ts-ignore
 router.delete('/:pid', auth, postController.deletePost);
