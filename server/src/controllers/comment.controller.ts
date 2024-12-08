@@ -1,122 +1,146 @@
-import {Request, Response} from 'express';
-import {Post} from '../models/Post';
-import {Comment} from '../models/Comment';
-import {AuthRequest} from "../middleware/auth";
+import { Response } from 'express';
+import { Campaign } from '../models/Campaign'; // Change from Post to Campaign
+import { Comment } from '../models/Comment';
+import { AuthRequest } from "../middleware/auth";
 
 export const commentController = {
     async createComment(req: AuthRequest, res: Response) {
         try {
-            const {pid, content} = req.body;
+            const { cid, content } = req.body;
             const userId = req.user?.userId;
+            
             if (!userId) {
-                return res.status(401).json({error: 'must be logged in.'});
+                return res.status(401).json({ error: 'Must be logged in.' });
             }
-            if (!pid) {
-                return res.status(400).json({error: 'pid is required.'});
+            
+            if (!cid) {
+                return res.status(400).json({ error: 'Campaign ID is required.' });
             }
+            
             if (!content || content.trim() === '') {
-                return res.status(400).json({error: 'Comment content cannot be empty.'});
+                return res.status(400).json({ error: 'Comment content cannot be empty.' });
             }
-            const post = await Post.findOne({pid}).populate('user', 'username');
-            if (!post) {
-                return res.status(404).json({error: 'Post not found.'});
+            
+            const campaign = await Campaign.findOne({ cid }).populate('user', 'username');
+            if (!campaign) {
+                return res.status(404).json({ error: 'Campaign not found.' });
             }
+            
             const newComment = new Comment({
                 user: userId,
-                post: post._id,
+                campaign: campaign._id, // Change post to campaign
                 content,
             });
+            
             const savedComment = await newComment.save();
+            await savedComment.populate('user', 'username');
 
             res.status(201).json({
-                message: 'OK.',
-                comment: savedComment,
+                message: 'Comment created successfully.',
+                comment: savedComment
             });
         } catch (error) {
             console.error('Create Comment error:', error);
-            res.status(500).json({error: 'Internal server error.'});
+            res.status(500).json({ error: 'Internal server error.' });
         }
     },
 
-    async getCommentsForPost(req: AuthRequest, res: Response) {
+    async getCommentsForCampaign(req: AuthRequest, res: Response) {
         try {
-            const {postId} = req.params;
+            const { cid } = req.params;
             const userId = req.user?.userId;
-            if (!postId) {
-                return res.status(400).json({error: 'pid is required.'});
+            
+            if (!cid) {
+                return res.status(400).json({ error: 'Campaign ID is required.' });
             }
-            const post = await Post.findOne({pid: postId});
-            if (!post) {
-                return res.status(404).json({error: 'Post not found.'});
+            
+            const campaign = await Campaign.findOne({ cid });
+            if (!campaign) {
+                return res.status(404).json({ error: 'Campaign not found.' });
             }
-            if (post.isHidden && !userId) {
-                return res.status(401).json({error: 'Unauthorized access to hidden post.'});
+            
+            if (campaign.isHidden && !userId) {
+                return res.status(401).json({ error: 'Unauthorized access to hidden campaign.' });
             }
-            const comments = await Comment.find({post: post._id})
-                .sort({createdAt: -1})
+            
+            const comments = await Comment.find({ campaign: campaign._id })
+                .sort({ createdAt: -1 })
                 .populate('user', 'username');
 
             res.status(200).json({
-                message: 'OK.',
-                comments,
+                message: 'Comments retrieved successfully.',
+                comments
             });
         } catch (error) {
-            console.error('Get Comments for Post error:', error);
-            res.status(500).json({error: 'Internal server error.'});
+            console.error('Get Comments error:', error);
+            res.status(500).json({ error: 'Internal server error.' });
         }
     },
 
     async updateComment(req: AuthRequest, res: Response) {
         try {
-            const {_id, content} = req.body;
+            const { _id, content } = req.body;
             const userId = req.user?.userId;
+            
             if (!userId) {
-                return res.status(401).json({error: 'must be logged in.'});
+                return res.status(401).json({ error: 'Must be logged in.' });
             }
+            
             const comment = await Comment.findById(_id);
             if (!comment) {
-                return res.status(404).json({error: 'Comment not found.'});
+                return res.status(404).json({ error: 'Comment not found.' });
             }
+            
             if (!comment.user.equals(userId)) {
-                return res.status(403).json({error: 'only original commenter can edit comment.'});
+                return res.status(403).json({ error: 'Only the original commenter can edit this comment.' });
             }
+            
             if (!content) {
-                res.status(400).json({error: 'Content is required to update the comment.'});
+                return res.status(400).json({ error: 'Content is required to update the comment.' });
             }
+            
             comment.content = content;
             await comment.save();
 
-            res.status(200).json({message: 'OK.', comment});
+            res.status(200).json({
+                message: 'Comment updated successfully.',
+                comment
+            });
         } catch (error) {
             console.error('Update Comment error:', error);
-            res.status(500).json({error: 'Internal server error'});
+            res.status(500).json({ error: 'Internal server error.' });
         }
     },
 
     async deleteComment(req: AuthRequest, res: Response) {
         try {
-            const {_id} = req.body;
+            const { _id } = req.body;
             const userId = req.user?.userId;
             const isAdmin = req.user?.isAdmin;
+            
             if (!_id) {
-                return res.status(400).json({error: 'ned commentId.'});
+                return res.status(400).json({ error: 'Comment ID is required.' });
             }
+            
             if (!userId) {
-                return res.status(401).json({error: 'must be logged in.'});
+                return res.status(401).json({ error: 'Must be logged in.' });
             }
+            
             const comment = await Comment.findById(_id);
             if (!comment) {
-                return res.status(404).json({error: 'Comment not found.'});
+                return res.status(404).json({ error: 'Comment not found.' });
             }
-            if (comment.user.toString() !== userId && !isAdmin) {
-                return res.status(403).json({error: 'only original commenter can delete comment.'});
+            
+            if (!comment.user.equals(userId) && !isAdmin) {
+                return res.status(403).json({ error: 'Only the original commenter or admin can delete this comment.' });
             }
+            
             await Comment.findByIdAndDelete(_id);
 
-            res.status(200).json({message: 'OK.'});
+            res.status(200).json({ message: 'Comment deleted successfully.' });
         } catch (error) {
             console.error('Delete Comment error:', error);
-            res.status(500).json({error: 'Internal server error.'});
+            res.status(500).json({ error: 'Internal server error.' });
         }
     }
 };

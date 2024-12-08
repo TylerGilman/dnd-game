@@ -4,14 +4,25 @@ import { auth, authOptional } from '../middleware/auth';
 
 const router = express.Router();
 
+// Explicitly define the callback functions
+router.post('/create', 
+    auth,
+    (req, res) => commentController.createComment(req, res)
+);
 
-//@ts-ignore
-router.post('/create', auth, commentController.createComment);
-//@ts-ignore
-router.get('/:postId', authOptional, commentController.getCommentsForPost);
-//@ts-ignore
-router.put('/', auth, commentController.updateComment);
-//@ts-ignore
-router.delete('/', auth, commentController.deleteComment);
+router.get('/campaign/:cid', 
+    authOptional,
+    (req, res) => commentController.getCommentsForCampaign(req, res)
+);
+
+router.put('/update', 
+    auth,
+    (req, res) => commentController.updateComment(req, res)
+);
+
+router.delete('/delete', 
+    auth,
+    (req, res) => commentController.deleteComment(req, res)
+);
 
 export default router;

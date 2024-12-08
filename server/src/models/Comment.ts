@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 export interface IComment extends mongoose.Document {
     _id: mongoose.Types.ObjectId;
     user: mongoose.Types.ObjectId;
-    post: mongoose.Types.ObjectId;
+    campaign: mongoose.Types.ObjectId; // Change from post to campaign
     content: string;
     createdAt: Date;
     updatedAt: Date;
@@ -15,9 +15,9 @@ const commentSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
-    post: {
+    campaign: {  // Change from post to campaign
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Post',
+        ref: 'Campaign',
         required: true
     },
     content: {

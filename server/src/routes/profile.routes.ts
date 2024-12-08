@@ -1,14 +1,23 @@
+// server/src/routes/profile.routes.ts
 import express from 'express';
 import { profileController } from '../controllers/profile.controller';
-import {auth, authOptional} from '../middleware/auth';
+import { auth, authOptional } from '../middleware/auth';
 
 const router = express.Router();
 
-//@ts-ignore
-router.get('/:username', authOptional, profileController.getProfile);
-//@ts-ignore
-router.post('/:username/update', auth, profileController.updateProfile);
-//@ts-ignore
-router.get('/:username/followers', auth, profileController.getProfileFollowers);
+router.get('/:username', 
+    authOptional,
+    (req, res) => profileController.getProfile(req, res)
+);
+
+router.post('/:username/update', 
+    auth,
+    (req, res) => profileController.updateProfile(req, res)
+);
+
+router.get('/:username/followers', 
+    auth,
+    (req, res) => profileController.getProfileFollowers(req, res)
+);
 
 export default router;
