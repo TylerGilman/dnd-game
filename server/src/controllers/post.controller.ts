@@ -104,7 +104,7 @@ export const postController = {
         try {
             const {query} = req.query;
             if (!query || typeof query !== 'string' || query.trim() === '') {
-                return res.status(400).json({error: 'Search query is required and cannot be empty.'});
+                return res.status(400).json({error: 'url param:query is required and cannot be empty.'});
             }
 
             const userId = req.user?.userId;
