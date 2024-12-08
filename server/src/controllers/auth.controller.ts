@@ -92,71 +92,63 @@ export const authController = {
 
     async addFollower(req: AuthRequest, res: Response) {
         try {
-            const {targetId} = req.body;
+            const {username} = req.body;
             const userId = req.user?.userId;
             if (!userId) {
                 return res.status(401).json({error: 'You must be logged in to perform this action.'});
             }
-
-            if (userId === targetId) {
-                return res.status(400).json({error: 'cannot follow yourself'});
+            if (!username) {
+                return res.status(400).json({error: 'Username is required.'});
             }
-            const user = await User.findOne({
-                _id: userId,
-            })
-            const targetUser = await User.findOne({
-                _id: targetId,
-            })
-
+            const user = await User.findById(userId);
+            const targetUser = await User.findOne({username});
             if (!user || !targetUser) {
-                return res.status(404).json({error: 'either or both user not found'});
+                return res.status(404).json({error: 'Either or both user not found.'});
             }
-
-            if (user.following.some((u) => u.toString() === targetId)) {
-                return res.status(400).json({error: 'already following user'});
+            if (user._id.equals(targetUser._id)) {
+                return res.status(400).json({error: 'cannot follow yourself.'});
             }
-
-            user.following.push(targetId);
+            if (user.following.some((id) => id.equals(targetUser._id))) {
+                return res.status(400).json({error: 'already following.'});
+            }
+            user.following.push(targetUser._id);
             await user.save();
 
-            res.status(200).json({message: "Followed successfully.", following: user.following});
+            res.status(200).json({message: 'OK.', following: user.following});
         } catch (error) {
             console.error('Add Follower error:', error);
-            res.status(400).json({error: (error as Error).message});
+            res.status(500).json({error: 'Internal server error.'});
         }
     },
 
     async removeFollower(req: AuthRequest, res: Response) {
         try {
-            const {targetId} = req.body;
+            const {username} = req.body;
             const userId = req.user?.userId;
             if (!userId) {
                 return res.status(401).json({error: 'You must be logged in to perform this action.'});
             }
-            if (userId === targetId) {
-                return res.status(400).json({error: 'cannot remove yourself'});
+            if (!username) {
+                return res.status(400).json({error: 'Username is required.'});
             }
-            const user = await User.findOne({
-                _id: userId,
-            })
-            const targetUser = await User.findOne({
-                _id: targetId,
-            })
-
+            const user = await User.findById(userId);
+            const targetUser = await User.findOne({username});
             if (!user || !targetUser) {
-                return res.status(404).json({error: 'either or both user not found'});
+                return res.status(404).json({error: 'Either or both user not found.'});
             }
-
-            if (!user.following.some((u) => u.toString() === targetId)) {
-                return res.status(400).json({error: 'already not following user'});
+            if (user._id.equals(targetUser._id)) {
+                return res.status(400).json({error: 'cannot unfollow yourself.'});
             }
-
-            user.following = user.following.filter((u) => u.toString() !== targetId);
+            if (!user.following.some((id) => id.equals(targetUser._id))) {
+                return res.status(400).json({error: 'not following.'});
+            }
+            user.following = user.following.filter((id) => !id.equals(targetUser._id));
             await user.save();
-            res.status(200).json({message: "Unfollowed successfully.", following: user.following});
+
+            res.status(200).json({message: 'OK.', following: user.following});
         } catch (error) {
-            console.error("Remove Follower error:", error);
-            res.status(500).json({error: "Internal server error."});
+            console.error('Remove Follower error:', error);
+            res.status(500).json({error: 'Internal server error.'});
         }
     }
 };

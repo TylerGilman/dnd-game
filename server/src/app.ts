@@ -34,7 +34,7 @@ app.use((req, res, next) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/comments', commentRoutes);
-app.use('/api/profile', profileRoutes);
+app.use('/api/profiles', profileRoutes);
 
 // Test route
 app.get('/test', (req, res) => {

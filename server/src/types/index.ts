@@ -3,6 +3,7 @@ export interface User {
   isAdmin: boolean;
   username: string;
   email: string;
+  tagline: string;
   password: string;
   following: User[];
 }

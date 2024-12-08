@@ -5,6 +5,8 @@ import AutoIncrementFactory from 'mongoose-sequence';
 const AutoIncrement = AutoIncrementFactory(mongoose);
 
 export interface IPost extends mongoose.Document{
+    _id: mongoose.Types.ObjectId;
+    pid: number;
     user: mongoose.Types.ObjectId;
     title: string;
     description: string;
