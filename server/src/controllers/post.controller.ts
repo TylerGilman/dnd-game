@@ -6,7 +6,7 @@ import mongoose from "mongoose";
 export const postController = {
     async createPost(req: AuthRequest, res: Response) {
         try {
-            const {title, description, setup} = req.body;
+            const {title, description, setup, isHidden} = req.body;
             const userId = req.user?.userId;
             if (!userId) {
                 return res.status(401).json({error: 'You must be logged in to create a post.'});
@@ -20,6 +20,7 @@ export const postController = {
                 description,
                 setup,
                 upvoteBy: [userId],
+                isHidden,
             });
             const savedPost = await newPost.save();
             res.status(201).json({
@@ -43,6 +44,9 @@ export const postController = {
             if (!post) {
                 return res.status(404).json({error: 'Post not found.'});
             }
+            if (!userId && post.isHidden) {
+                return res.status(403).json({error: 'this post restrict access to public'});
+            }
             const upvoteCount = post.upvoteBy.length;
             const isUpvoted = userId ? post.upvoteBy.some((id) => id.toString() === userId) : false;
             res.status(200).json({
@@ -59,28 +63,18 @@ export const postController = {
         }
     },
 
+
     async getPosts(req: AuthRequest, res: Response) {
         try {
             const userId = req.user?.userId;
-
-            const pageParam = parseInt(req.query.page as string, 10);
-            const page = isNaN(pageParam) || pageParam < 1 ? 1 : pageParam;
-            const limit = 8;
-            const skip = (page - 1) * limit;
-            const totalPosts = await Post.countDocuments();
-            const totalPages = Math.ceil(totalPosts / limit);
-            const currentPage = page > totalPages ? 1 : page;
-
-            const posts = await Post.find()
+            const isAuthenticated = !!userId;
+            const query = isAuthenticated ? {} : {isHidden: {$ne: true}};
+            const posts = await Post.find(query)
                 .sort({createdAt: -1})
-                .skip((currentPage - 1) * limit)
-                .limit(limit)
                 .populate('user', 'username email');
-
-            const sanatizedPosts = posts.map((post) => {
+            const sanitizedPosts = posts.map((post) => {
                 const upvoteCount = post.upvoteBy.length;
-                const isUpvoted = userId ? post.upvoteBy.some((id) => id.toString() === userId) : false;
-
+                const isUpvoted = isAuthenticated ? post.upvoteBy.some((id) => id.toString() === userId) : false;
                 return {
                     ...post.toObject(),
                     upvoteCount,
@@ -90,9 +84,7 @@ export const postController = {
 
             res.status(200).json({
                 message: 'OK.',
-                currentPage,
-                totalPages,
-                posts: sanatizedPosts
+                posts: sanitizedPosts,
             });
         } catch (error) {
             console.error('Get Posts error:', error);
