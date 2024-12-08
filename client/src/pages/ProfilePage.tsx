@@ -94,6 +94,19 @@ export const ProfilePage = () => {
 
   return (
     <div className="min-h-screen bg-[#2c1810] p-8">
+  <div className="max-w-4xl mx-auto">
+      {/* Navigation */}
+    <div className="mb-8 flex justify-between items-center bg-[#f4e4bc] p-4 rounded-lg border-4 border-[#8B4513] shadow-lg">
+      <Button 
+        onClick={() => navigate('/dashboard')}
+        className="bg-[#8B4513] text-[#f4e4bc] hover:bg-[#6b3410] font-semibold px-6 py-2 rounded shadow-inner border-2 border-[#f4e4bc]"
+      >
+        ← Back to Tavern
+      </Button>
+      <h2 className="text-[#8B4513] font-serif text-xl">
+        {isLoading ? 'Loading...' : profile?.username + "'s Profile"}
+      </h2>
+    </div>
       <div className="max-w-4xl mx-auto">
         {/* Profile Card */}
         <Card className="bg-[#f4e4bc] border-4 border-[#8B4513] shadow-[8px_8px_0_#000] mb-8">
@@ -236,6 +249,7 @@ export const ProfilePage = () => {
           </DialogContent>
         </Dialog>
       </div>
+    </div>
     </div>
   );
 };

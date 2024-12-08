@@ -77,6 +77,27 @@ export const api = {
 
       return response.json();
   },
+async updateCampaign(cid: number, data: { title?: string; description?: string; content?: string }, token: string) {
+    // Add console.log to see what we're sending to the server
+    console.log('API updateCampaign:', { cid, data });
+
+    const response = await fetch(`${API_URL}/api/campaigns/${cid}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to update campaign');
+    }
+
+    return response.json();
+},
 
       async deleteCampaign(cid: number, token: string) {
         const response = await fetch(`${API_URL}/api/campaigns/${cid}`, {

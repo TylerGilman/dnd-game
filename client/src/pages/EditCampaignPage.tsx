@@ -39,36 +39,46 @@ export const EditCampaignPage = () => {
     loadCampaign();
   }, [cid, navigate, showNotification]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) {
-      showNotification('You must be logged in to edit a campaign', 'error');
-      return;
+        showNotification('You must be logged in to edit a campaign', 'error');
+        return;
     }
 
     try {
-      setIsSubmitting(true);
-      const token = localStorage.getItem('token');
-      if (!token) throw new Error('No authentication token found');
+        setIsSubmitting(true);
+        const token = localStorage.getItem('token');
+        if (!token) throw new Error('No authentication token found');
 
-      await api.updateCampaign(Number(cid), form, token);
-      showNotification('🎉 Your tale has been updated!', 'success');
-      navigate('/dashboard');
+        // Add console.log to see what we're sending
+        console.log('Submitting update:', form);
+
+        await api.updateCampaign(Number(cid), {
+            title: form.title,
+            description: form.description,
+            content: form.content
+        }, token);
+
+        showNotification('🎉 Your tale has been updated!', 'success');
+        navigate('/dashboard');
     } catch (error) {
-      console.error('Update campaign error:', error);
-      showNotification(error instanceof Error ? error.message : 'Failed to update campaign', 'error');
+        console.error('Update campaign error:', error);
+        showNotification(error instanceof Error ? error.message : 'Failed to update campaign', 'error');
     } finally {
-      setIsSubmitting(false);
+        setIsSubmitting(false);
     }
-  };
+};
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
+    // Add console.log to track changes
+    console.log('Form change:', { name, value });
     setForm(prev => ({
-      ...prev,
-      [name]: value
+        ...prev,
+        [name]: value
     }));
-  };
+};
 
   return (
     <div className="min-h-screen bg-[#2c1810] py-12 px-4 sm:px-6 lg:px-8">

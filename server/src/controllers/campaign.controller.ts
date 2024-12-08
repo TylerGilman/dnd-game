@@ -161,39 +161,41 @@ async getCampaign(req: AuthRequest, res: Response) {
         }
     },
 
-    async updateCampaign(req: AuthRequest, res: Response) {
-        try {
-            const { cid } = req.params;
-            const { description, content, isHidden } = req.body;
-            const userId = req.user?.userId;
-
-            if (!userId) {
-                return res.status(401).json({ error: 'Must be logged in.' });
-            }
-
-            const campaign = await Campaign.findOne({ cid });
-            if (!campaign) {
-                return res.status(404).json({ error: 'Campaign not found.' });
-            }
-
-            if (campaign.user.toString() !== userId) {
-                return res.status(403).json({ error: 'Only the campaign creator can edit.' });
-            }
-
-            if (description !== undefined) campaign.description = description;
-            if (content !== undefined) campaign.content = content;
-            if (isHidden !== undefined) campaign.isHidden = isHidden;
-
-            const updatedCampaign = await campaign.save();
-            res.status(200).json({
-                message: 'Campaign updated successfully.',
-                campaign: updatedCampaign
-            });
-        } catch (error) {
-            console.error('Update Campaign error:', error);
-            res.status(500).json({ error: 'Failed to update campaign' });
+async updateCampaign(req: AuthRequest, res: Response) {
+    try {
+        const { cid } = req.params;
+        const { title, description, content } = req.body;
+        const userId = req.user?.userId;
+        console.log(title);
+        if (!userId) {
+            return res.status(401).json({ error: 'Must be logged in.' });
         }
-    },
+
+        const campaign = await Campaign.findOne({ cid });
+        if (!campaign) {
+            return res.status(404).json({ error: 'Campaign not found.' });
+        }
+
+        if (campaign.user.toString() !== userId) {
+            return res.status(403).json({ error: 'Only the campaign creator can edit.' });
+        }
+
+        // Update only the provided fields
+        if (title !== undefined) campaign.title = title;
+        if (description !== undefined) campaign.description = description;
+        if (content !== undefined) campaign.content = content;
+
+        const updatedCampaign = await campaign.save();
+        
+        res.status(200).json({
+            message: 'Campaign updated successfully.',
+            campaign: updatedCampaign
+        });
+    } catch (error) {
+        console.error('Update Campaign error:', error);
+        res.status(500).json({ error: 'Failed to update campaign' });
+    }
+},
 
     async deleteCampaign(req: AuthRequest, res: Response) {
         try {
