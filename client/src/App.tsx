@@ -7,7 +7,7 @@ import { PrivateRoute } from './components/PrivateRoute';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { DashboardPage } from './pages/DashboardPage';
-
+import { CreateCampaignPage } from './pages/CreateCampaignPage';
 const queryClient = new QueryClient();
 
 function App() {
@@ -24,6 +24,14 @@ function App() {
                 element={
                   <PrivateRoute>
                     <DashboardPage />
+                  </PrivateRoute>
+                } 
+              />
+              <Route 
+                path="/campaigns/new" 
+                element={
+                  <PrivateRoute>
+                    <CreateCampaignPage />
                   </PrivateRoute>
                 } 
               />

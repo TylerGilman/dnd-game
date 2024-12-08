@@ -1,10 +1,10 @@
-// client/src/pages/RegisterPage.tsx
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate, Navigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../context/NotificationContext';
 import { api } from '../services/api';
+import { UserPlus, Mail, KeyRound, Scroll, User } from 'lucide-react';
 
 interface RegisterFormData {
   username: string;
@@ -31,15 +31,14 @@ export const RegisterPage = () => {
       api.register(data.username, data.email, data.password),
     onSuccess: (data) => {
       login(data.user, data.token);
-      showNotification('Registration successful! Welcome aboard!', 'success');
+      showNotification('🎉 Your name has been added to the guild roster!', 'success');
       navigate('/dashboard');
     },
     onError: (error: Error) => {
-      showNotification(error.message, 'error');
+      showNotification('⚔️ ' + error.message, 'error');
     }
   });
 
-  // Redirect if already logged in
   if (user) {
     return <Navigate to="/dashboard" replace />;
   }
@@ -47,32 +46,28 @@ export const RegisterPage = () => {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
     
-    // Username validation
     if (!formData.username) {
-      newErrors.username = 'Username is required';
+      newErrors.username = 'Every hero needs a name!';
     } else if (formData.username.length < 3) {
-      newErrors.username = 'Username must be at least 3 characters';
+      newErrors.username = 'Your name must be at least 3 characters long';
     }
     
-    // Email validation
     if (!formData.email) {
-      newErrors.email = 'Email is required';
+      newErrors.email = 'We need a magical scroll to contact you';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid';
+      newErrors.email = 'This magical scroll address seems invalid';
     }
     
-    // Password validation
     if (!formData.password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = 'Choose your secret passphrase';
     } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+      newErrors.password = 'Your passphrase must be at least 6 characters long';
     }
     
-    // Confirm password validation
     if (!formData.confirmPassword) {
-      newErrors.confirmPassword = 'Please confirm your password';
+      newErrors.confirmPassword = 'Confirm your secret passphrase';
     } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
+      newErrors.confirmPassword = 'Your passphrases do not match!';
     }
     
     setErrors(newErrors);
@@ -96,28 +91,29 @@ export const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Create your account
+    <div className="min-h-screen bg-[#2c1810] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
+        <UserPlus className="mx-auto h-12 w-12 text-[#deb887]" />
+        <h2 className="mt-4 text-center text-3xl font-bold font-serif text-[#deb887]">
+          Join the Adventurer's Guild
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          Already have an account?{' '}
-          <Link to="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
-            Sign in
+        <p className="mt-2 text-center text-[#f4e4bc] font-serif">
+          Already a member?{' '}
+          <Link to="/login" className="font-medium text-[#deb887] hover:text-[#f4e4bc] underline">
+            Return to the tavern
           </Link>
         </p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <div className="bg-[#f4e4bc] border-4 border-[#8B4513] rounded-lg shadow-[8px_8px_0_#000] px-6 py-8">
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Username field */}
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                Username
+              <label htmlFor="username" className="block text-lg font-serif font-bold text-[#8B4513]">
+                Hero's Name
               </label>
-              <div className="mt-1">
+              <div className="mt-1 relative">
+                <User className="absolute left-3 top-2.5 h-5 w-5 text-[#8B4513]" />
                 <input
                   id="username"
                   name="username"
@@ -125,22 +121,23 @@ export const RegisterPage = () => {
                   autoComplete="username"
                   value={formData.username}
                   onChange={handleChange}
-                  className={`appearance-none block w-full px-3 py-2 border ${
-                    errors.username ? 'border-red-300' : 'border-gray-300'
-                  } rounded-md shadow-sm placeholder-gray-400 text-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+                  className={`pl-10 w-full bg-[#deb887] border-2 ${
+                    errors.username ? 'border-red-700' : 'border-[#8B4513]'
+                  } rounded-lg text-[#2c1810] placeholder-[#8B4513]/60 focus:ring-2 focus:ring-[#8B4513] p-2 text-lg`}
+                  placeholder="What shall we call you?"
                 />
                 {errors.username && (
-                  <p className="mt-2 text-sm text-red-600">{errors.username}</p>
+                  <p className="mt-2 text-sm text-red-700 font-medium">{errors.username}</p>
                 )}
               </div>
             </div>
 
-            {/* Email field */}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email address
+              <label htmlFor="email" className="block text-lg font-serif font-bold text-[#8B4513]">
+                Magical Contact Scroll
               </label>
-              <div className="mt-1">
+              <div className="mt-1 relative">
+                <Mail className="absolute left-3 top-2.5 h-5 w-5 text-[#8B4513]" />
                 <input
                   id="email"
                   name="email"
@@ -148,22 +145,23 @@ export const RegisterPage = () => {
                   autoComplete="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className={`appearance-none block w-full px-3 py-2 border ${
-                    errors.email ? 'border-red-300' : 'border-gray-300'
-                  } rounded-md shadow-sm placeholder-gray-400 text-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+                  className={`pl-10 w-full bg-[#deb887] border-2 ${
+                    errors.email ? 'border-red-700' : 'border-[#8B4513]'
+                  } rounded-lg text-[#2c1810] placeholder-[#8B4513]/60 focus:ring-2 focus:ring-[#8B4513] p-2 text-lg`}
+                  placeholder="For guild communications"
                 />
                 {errors.email && (
-                  <p className="mt-2 text-sm text-red-600">{errors.email}</p>
+                  <p className="mt-2 text-sm text-red-700 font-medium">{errors.email}</p>
                 )}
               </div>
             </div>
 
-            {/* Password field */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Password
+              <label htmlFor="password" className="block text-lg font-serif font-bold text-[#8B4513]">
+                Secret Passphrase
               </label>
-              <div className="mt-1">
+              <div className="mt-1 relative">
+                <KeyRound className="absolute left-3 top-2.5 h-5 w-5 text-[#8B4513]" />
                 <input
                   id="password"
                   name="password"
@@ -171,22 +169,23 @@ export const RegisterPage = () => {
                   autoComplete="new-password"
                   value={formData.password}
                   onChange={handleChange}
-                  className={`appearance-none block w-full px-3 py-2 border ${
-                    errors.password ? 'border-red-300' : 'border-gray-300'
-                  } rounded-md shadow-sm placeholder-gray-400 text-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+                  className={`pl-10 w-full bg-[#deb887] border-2 ${
+                    errors.password ? 'border-red-700' : 'border-[#8B4513]'
+                  } rounded-lg text-[#2c1810] placeholder-[#8B4513]/60 focus:ring-2 focus:ring-[#8B4513] p-2 text-lg`}
+                  placeholder="Choose wisely"
                 />
                 {errors.password && (
-                  <p className="mt-2 text-sm text-red-600">{errors.password}</p>
+                  <p className="mt-2 text-sm text-red-700 font-medium">{errors.password}</p>
                 )}
               </div>
             </div>
 
-            {/* Confirm Password field */}
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                Confirm Password
+              <label htmlFor="confirmPassword" className="block text-lg font-serif font-bold text-[#8B4513]">
+                Confirm Passphrase
               </label>
-              <div className="mt-1">
+              <div className="mt-1 relative">
+                <KeyRound className="absolute left-3 top-2.5 h-5 w-5 text-[#8B4513]" />
                 <input
                   id="confirmPassword"
                   name="confirmPassword"
@@ -194,24 +193,24 @@ export const RegisterPage = () => {
                   autoComplete="new-password"
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  className={`appearance-none block w-full px-3 py-2 border ${
-                    errors.confirmPassword ? 'border-red-300' : 'border-gray-300'
-                  } rounded-md shadow-sm placeholder-gray-400 text-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+                  className={`pl-10 w-full bg-[#deb887] border-2 ${
+                    errors.confirmPassword ? 'border-red-700' : 'border-[#8B4513]'
+                  } rounded-lg text-[#2c1810] placeholder-[#8B4513]/60 focus:ring-2 focus:ring-[#8B4513] p-2 text-lg`}
+                  placeholder="Speak it once more"
                 />
                 {errors.confirmPassword && (
-                  <p className="mt-2 text-sm text-red-600">{errors.confirmPassword}</p>
+                  <p className="mt-2 text-sm text-red-700 font-medium">{errors.confirmPassword}</p>
                 )}
               </div>
             </div>
 
-            {/* Submit button */}
-            <div>
+            <div className="pt-4">
               <button
                 type="submit"
                 disabled={mutation.isPending}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+                className="w-full bg-[#8B4513] text-[#f4e4bc] hover:bg-[#6b3410] font-bold px-4 py-3 rounded-lg shadow-[4px_4px_0_#000] border-2 border-[#f4e4bc] transition-all hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0_#000] disabled:opacity-50"
               >
-                {mutation.isPending ? 'Creating account...' : 'Create account'}
+                {mutation.isPending ? '🎲 Enrolling...' : '⚔️ Join the Guild'}
               </button>
             </div>
           </form>

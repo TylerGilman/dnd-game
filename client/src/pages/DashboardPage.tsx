@@ -2,184 +2,136 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useNotification } from '../context/NotificationContext';
-import { PlusCircle, Users, GamepadIcon, X } from 'lucide-react';
+import { Search, PlusCircle, Scroll, LogOut } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { 
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 
-const FriendsList = ({ friends, onRemoveFriend }) => (
-  <div className="space-y-2">
-    {friends.map((friend) => (
-      <div key={friend.id} className="flex items-center justify-between p-2 bg-white rounded-lg shadow-sm">
-        <span>{friend.username}</span>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm">
-            Invite to Game
-          </Button>
-          <Button 
-            variant="ghost" 
-            size="sm"
-            className="bg-white"
-            onClick={() => onRemoveFriend(friend.id)}
-          >
-            <X className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-    ))}
-  </div>
-);
-
-const CreateGameDialog = () => {
-  const [gameName, setGameName] = useState('');
-  const [playerLimit, setPlayerLimit] = useState(4);
-
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button className="w-full">
-          <PlusCircle className="mr-2 h-4 w-4" />
-          Create New Game
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Create New Game</DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4">
-          <div>
-            <label className="text-sm font-medium">Game Name</label>
-            <Input
-              value={gameName}
-              onChange={(e) => setGameName(e.target.value)}
-              placeholder="Enter game name"
-            />
-          </div>
-          <div>
-            <label className="text-sm font-medium">Player Limit</label>
-            <Input
-              type="number"
-              value={playerLimit}
-              onChange={(e) => setPlayerLimit(parseInt(e.target.value))}
-              min={2}
-              max={6}
-            />
-          </div>
-          <Button className="w-full">Create Game</Button>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-};
+interface Campaign {
+  _id: string;
+  title: string;
+  description: string;
+  author: string;
+  upvotes: number;
+  isPublic: boolean;
+  createdAt: string;
+}
 
 export const DashboardPage = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const { showNotification } = useNotification();
-  const [friends] = useState([
-    { id: 1, username: 'Player1' },
-    { id: 2, username: 'Player2' },
-  ]);
-  
+  const [searchQuery, setSearchQuery] = useState('');
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]); // This will be populated from your API
+
   const handleLogout = () => {
     logout();
-    showNotification('Successfully logged out', 'success');
+    showNotification('🚪 Farewell, brave adventurer!', 'success');
     navigate('/login');
   };
 
-  const handleRemoveFriend = (friendId) => {
-    // Implementation would go here
-    showNotification('Friend removed', 'success');
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    // Implement campaign search logic here
   };
 
-  const handleAddFriend = (username) => {
-    // Implementation would go here
-    showNotification('Friend request sent', 'success');
+  const handleCreateCampaign = () => {
+    navigate('/campaigns/new');
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <h1 className="text-xl font-bold text-gray-900">D&D Text Adventure</h1>
+    <div className="min-h-screen bg-[#2c1810] p-4 sm:p-6 lg:p-8">
+      {/* Navigation */}
+      <nav className="bg-[#deb887] border-4 border-[#8B4513] rounded-lg shadow-[8px_8px_0_#000] mb-8">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-4">
+              <Scroll className="h-8 w-8 text-[#8B4513]" />
+              <h1 className="text-2xl font-bold font-serif text-[#8B4513]">The Adventurer's Tavern</h1>
             </div>
-            <div className="flex items-center bg-white space-x-4">
-              <span className="text-gray-700">Welcome, {user?.username}!</span>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm">
-                    <Users className="h-4 w-4 mr-2" />
-                    Friends
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 bg-white">
-                  <DropdownMenuItem onSelect={() => handleAddFriend('newFriend')}>
-                    Add Friend
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+            <div className="flex items-center gap-6">
+              {user && (
+                <span className="text-[#8B4513] font-serif">
+                  Welcome, {user.username}! 🍺
+                </span>
+              )}
               <Button
                 onClick={handleLogout}
-                variant="default"
+                variant="outline"
+                className="bg-[#8B4513] text-[#f4e4bc] hover:bg-[#6b3410] font-bold px-4 py-2 rounded shadow-[4px_4px_0_#000] border-2 border-[#f4e4bc] flex items-center gap-2"
               >
-                Logout
+                <LogOut className="h-4 w-4" />
+                Leave Tavern
               </Button>
             </div>
           </div>
         </div>
       </nav>
-      
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="md:col-span-2">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <GamepadIcon className="mr-2 h-5 w-5" />
-                  Games
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto">
+        {/* Search and Create Section */}
+        <Card className="bg-[#deb887] border-4 border-[#8B4513] shadow-[8px_8px_0_#000] mb-8">
+          <CardContent className="p-6">
+            <div className="flex gap-4 flex-col sm:flex-row">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-3 h-5 w-5 text-[#8B4513]" />
+                <Input
+                  placeholder="Search for legendary tales..."
+                  value={searchQuery}
+                  onChange={(e) => handleSearch(e.target.value)}
+                  className="pl-10 bg-[#f4e4bc] border-2 border-[#8B4513] text-[#2c1810] placeholder-[#8B4513]/60 focus:ring-2 focus:ring-[#8B4513] h-12 text-lg rounded-lg"
+                />
+              </div>
+              {user && (
+                <Button
+                  onClick={handleCreateCampaign}
+                  className="bg-[#2c1810] text-[#f4e4bc] hover:bg-[#1a0f09] font-bold px-6 h-12 rounded-lg shadow-[4px_4px_0_#000] border-2 border-[#f4e4bc] flex items-center gap-2 whitespace-nowrap"
+                >
+                  <PlusCircle className="h-5 w-5" />
+                  Inscribe New Tale
+                </Button>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Campaigns Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {campaigns.map((campaign) => (
+            <Card 
+              key={campaign._id} 
+              className="bg-[#f4e4bc] border-4 border-[#8B4513] shadow-[8px_8px_0_#000] hover:translate-x-1 hover:translate-y-1 hover:shadow-[4px_4px_0_#000] transition-all"
+            >
+              <CardHeader className="border-b-4 border-[#8B4513] bg-[#deb887]">
+                <CardTitle className="text-xl font-serif text-[#8B4513]">
+                  {campaign.title}
                 </CardTitle>
+                <p className="text-sm text-[#8B4513]/80 font-serif">by {campaign.author}</p>
               </CardHeader>
-              <CardContent>
-                <CreateGameDialog />
-                <div className="mt-4">
-                  <p className="text-gray-500 text-center">No active games</p>
+              <CardContent className="p-6">
+                <p className="text-[#2c1810] mb-4 font-medium">{campaign.description}</p>
+                <div className="flex justify-between items-center text-sm text-[#8B4513]">
+                  <span className="flex items-center gap-1">
+                    🎲 {campaign.upvotes} adventurers approve
+                  </span>
+                  <span className="font-serif">
+                    {new Date(campaign.createdAt).toLocaleDateString()}
+                  </span>
                 </div>
               </CardContent>
             </Card>
-          </div>
-          
-          <div>
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Users className="mr-2 h-5 w-5" />
-                  Friends
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <FriendsList 
-                  friends={friends}
-                  onRemoveFriend={handleRemoveFriend}
-                />
-              </CardContent>
-            </Card>
-          </div>
+          ))}
         </div>
+
+        {/* Empty State */}
+        {campaigns.length === 0 && (
+          <Card className="bg-[#f4e4bc] border-4 border-[#8B4513] shadow-[8px_8px_0_#000] p-12 text-center">
+            <p className="text-[#8B4513] text-lg font-serif">
+              The tavern is quiet... No tales have been shared yet. 🍺
+            </p>
+          </Card>
+        )}
       </main>
     </div>
   );

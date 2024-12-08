@@ -4,6 +4,7 @@ import { useNavigate, Navigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../context/NotificationContext';
 import { api } from '../services/api';
+import { KeyRound, Mail, Scroll } from 'lucide-react';
 
 export const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -27,12 +28,12 @@ export const LoginPage = () => {
     },
     onSuccess: (data) => {
       login(data.user, data.token);
-      showNotification('Successfully logged in!', 'success');
+      showNotification('🍺 Welcome back to the tavern!', 'success');
       navigate('/dashboard');
     },
     onError: (error: Error) => {
       console.error('Login mutation error:', error);
-      showNotification(error.message || 'Failed to login', 'error');
+      showNotification('🚫 ' + (error.message || 'The tavern keeper does not recognize you'), 'error');
     }
   });
 
@@ -44,13 +45,13 @@ export const LoginPage = () => {
     const newErrors: Record<string, string> = {};
     
     if (!formData.email) {
-      newErrors.email = 'Email is required';
+      newErrors.email = 'Your magical contact scroll is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid';
+      newErrors.email = 'This magical scroll address seems invalid';
     }
     
     if (!formData.password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = 'Your secret passphrase is required';
     }
     
     setErrors(newErrors);
@@ -73,27 +74,29 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Sign in to your account
+    <div className="min-h-screen bg-[#2c1810] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
+        <Scroll className="mx-auto h-12 w-12 text-[#deb887]" />
+        <h2 className="mt-4 text-center text-3xl font-bold font-serif text-[#deb887]">
+          Welcome to the Tavern
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          Or{' '}
-          <Link to="/register" className="font-medium text-indigo-600 hover:text-indigo-500">
-            create a new account
+        <p className="mt-2 text-center text-[#f4e4bc] font-serif">
+          New adventurer?{' '}
+          <Link to="/register" className="font-medium text-[#deb887] hover:text-[#f4e4bc] underline">
+            Join the guild
           </Link>
         </p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <div className="bg-[#f4e4bc] border-4 border-[#8B4513] rounded-lg shadow-[8px_8px_0_#000] px-6 py-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email address
+              <label htmlFor="email" className="block text-lg font-serif font-bold text-[#8B4513]">
+                Magical Contact Scroll
               </label>
-              <div className="mt-1">
+              <div className="mt-1 relative">
+                <Mail className="absolute left-3 top-2.5 h-5 w-5 text-[#8B4513]" />
                 <input
                   id="email"
                   name="email"
@@ -101,21 +104,22 @@ export const LoginPage = () => {
                   autoComplete="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className={`appearance-none block text-white w-full px-3 py-2 border ${
-                    errors.email ? 'border-red-300' : 'border-gray-300'
-                  } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+                  className={`pl-10 w-full bg-[#deb887] border-2 ${
+                    errors.email ? 'border-red-700' : 'border-[#8B4513]'
+                  } rounded-lg text-[#2c1810] placeholder-[#8B4513]/60 focus:ring-2 focus:ring-[#8B4513] p-2 text-lg`}
                 />
                 {errors.email && (
-                  <p className="mt-2 text-sm text-red-600">{errors.email}</p>
+                  <p className="mt-2 text-sm text-red-700 font-medium">{errors.email}</p>
                 )}
               </div>
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Password
+              <label htmlFor="password" className="block text-lg font-serif font-bold text-[#8B4513]">
+                Secret Passphrase
               </label>
-              <div className="mt-1">
+              <div className="mt-1 relative">
+                <KeyRound className="absolute left-3 top-2.5 h-5 w-5 text-[#8B4513]" />
                 <input
                   id="password"
                   name="password"
@@ -123,23 +127,23 @@ export const LoginPage = () => {
                   autoComplete="current-password"
                   value={formData.password}
                   onChange={handleChange}
-                  className={`appearance-none block w-full text-white px-3 py-2 border ${
-                    errors.password ? 'border-red-300' : 'border-gray-300'
-                  } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+                  className={`pl-10 w-full bg-[#deb887] border-2 ${
+                    errors.password ? 'border-red-700' : 'border-[#8B4513]'
+                  } rounded-lg text-[#2c1810] placeholder-[#8B4513]/60 focus:ring-2 focus:ring-[#8B4513] p-2 text-lg`}
                 />
                 {errors.password && (
-                  <p className="mt-2 text-sm text-red-600">{errors.password}</p>
+                  <p className="mt-2 text-sm text-red-700 font-medium">{errors.password}</p>
                 )}
               </div>
             </div>
 
-            <div>
+            <div className="pt-4">
               <button
                 type="submit"
                 disabled={mutation.isPending}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+                className="w-full bg-[#8B4513] text-[#f4e4bc] hover:bg-[#6b3410] font-bold px-4 py-3 rounded-lg shadow-[4px_4px_0_#000] border-2 border-[#f4e4bc] transition-all hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0_#000] disabled:opacity-50"
               >
-                {mutation.isPending ? 'Signing in...' : 'Sign in'}
+                {mutation.isPending ? '🎲 Rolling for entry...' : '🍺 Enter the Tavern'}
               </button>
             </div>
           </form>

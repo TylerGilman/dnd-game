@@ -8,6 +8,7 @@ import authRoutes from './routes/auth.routes';
 import postRoutes from "./routes/post.routes";
 import commentRoutes from "./routes/comment.routes";
 import profileRoutes from "./routes/profile.routes";
+import campaignRoutes from "./routes/campaign.routes";
 
 const app = express();
 const httpServer = createServer(app);
@@ -35,6 +36,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/posts', postRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/profiles', profileRoutes);
+app.use('/api/campaigns', campaignRoutes);
 
 // Test route
 app.get('/test', (req, res) => {
