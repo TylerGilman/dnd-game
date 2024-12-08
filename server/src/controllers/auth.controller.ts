@@ -32,7 +32,10 @@ export const authController = {
 
             // Generate token
             const token = jwt.sign(
-                {userId: user._id},
+                {
+                    userId: user._id,
+                    isAdmin: user.isAdmin,
+                },
                 config.jwtSecret,
                 {expiresIn: '24h'}
             );
@@ -64,7 +67,10 @@ export const authController = {
 
             // Generate token
             const token = jwt.sign(
-                {userId: user._id},
+                {
+                    userId: user._id,
+                    isAdmin: user.isAdmin,
+                },
                 config.jwtSecret,
                 {expiresIn: '24h'}
             );

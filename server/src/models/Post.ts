@@ -1,4 +1,8 @@
 import mongoose from "mongoose";
+// @ts-ignore
+import AutoIncrementFactory from 'mongoose-sequence';
+
+const AutoIncrement = AutoIncrementFactory(mongoose);
 
 export interface IPost extends mongoose.Document{
     user: mongoose.Types.ObjectId;
@@ -36,4 +40,5 @@ const postSchema = new mongoose.Schema({
     timestamps: true
 });
 
+postSchema.plugin(AutoIncrement, { inc_field: 'pid'});
 export const Post = mongoose.model<IPost>("Post", postSchema);
