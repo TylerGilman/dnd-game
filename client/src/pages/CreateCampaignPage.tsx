@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollText, Feather } from 'lucide-react';
+import { api } from '../services/api';
 
 interface CampaignForm {
   title: string;
@@ -32,39 +33,34 @@ export const CreateCampaignPage = () => {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  
+  if (!user) {
+    showNotification('You must be logged in to create a campaign', 'error');
+    return;
+  }
+
+  try {
+    setIsSubmitting(true);
+    const token = localStorage.getItem('token');
     
-    if (!user) {
-      showNotification('You must be logged in to create a campaign', 'error');
-      return;
+    if (!token) {
+      throw new Error('No authentication token found');
     }
 
-    try {
-      setIsSubmitting(true);
-      const response = await fetch('/api/campaigns/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify(form)
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to create campaign');
-      }
-
-      const data = await response.json();
-      showNotification('🎲 Your tale has been inscribed in the archives!', 'success');
-      navigate(`/campaigns/${data.campaign.cid}`);
-    } catch (error) {
-      console.error('Create campaign error:', error);
-      showNotification('🚫 The archives rejected your tale', 'error');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+    await api.createCampaign(form, token);
+    
+    showNotification('🎲 Your tale has been inscribed in the archives!', 'success');
+    // Navigate back to dashboard instead of a specific campaign page
+    navigate('/dashboard');
+  } catch (error) {
+    console.error('Create campaign error:', error);
+    showNotification(error instanceof Error ? error.message : 'Failed to create campaign', 'error');
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-[#2c1810] py-12 px-4 sm:px-6 lg:px-8">

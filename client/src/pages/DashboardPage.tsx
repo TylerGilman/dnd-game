@@ -1,19 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useNotification } from '../context/NotificationContext';
 import { Search, PlusCircle, Scroll, LogOut } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { User } from 'lucide-react';
+import { api } from '../services/api';
 
 interface Campaign {
   _id: string;
+  cid: number;
   title: string;
   description: string;
-  author: string;
-  upvotes: number;
-  isPublic: boolean;
+  content?: string; // Optional because it's only visible to logged-in users
+  user: {
+    _id: string;
+    username: string;
+  };
+  upvotes: string[];
   createdAt: string;
 }
 
@@ -23,6 +29,24 @@ export const DashboardPage = () => {
   const { showNotification } = useNotification();
   const [searchQuery, setSearchQuery] = useState('');
   const [campaigns, setCampaigns] = useState<Campaign[]>([]); // This will be populated from your API
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadCampaigns = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await api.getCampaigns(token);
+        setCampaigns(response.campaigns);
+      } catch (error) {
+        console.error('Failed to load campaigns:', error);
+        showNotification('Failed to load campaigns', 'error');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadCampaigns();
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -49,21 +73,26 @@ export const DashboardPage = () => {
               <Scroll className="h-8 w-8 text-[#8B4513]" />
               <h1 className="text-2xl font-bold font-serif text-[#8B4513]">The Adventurer's Tavern</h1>
             </div>
-            <div className="flex items-center gap-6">
-              {user && (
-                <span className="text-[#8B4513] font-serif">
-                  Welcome, {user.username}! 🍺
-                </span>
-              )}
-              <Button
-                onClick={handleLogout}
-                variant="outline"
-                className="bg-[#8B4513] text-[#f4e4bc] hover:bg-[#6b3410] font-bold px-4 py-2 rounded shadow-[4px_4px_0_#000] border-2 border-[#f4e4bc] flex items-center gap-2"
-              >
-                <LogOut className="h-4 w-4" />
-                Leave Tavern
-              </Button>
-            </div>
+              <div className="flex items-center space-x-4">
+                {user && (
+                  <>
+                    <Link 
+                      to={`/profile/${user.username}`}
+                      className="flex items-center gap-2 text-[#8B4513] hover:text-[#6b3410] font-serif transition-colors"
+                    >
+                      <User className="h-5 w-5" />
+                      <span>Welcome, {user.username}! 🍺</span>
+                    </Link>
+                    <Button
+                      onClick={handleLogout}
+                      variant="outline"
+                      className="bg-[#8B4513] text-[#f4e4bc] hover:bg-[#6b3410] font-bold px-4 py-2 rounded shadow-[4px_4px_0_#000] border-2 border-[#f4e4bc] flex items-center gap-2"
+                    >
+                      Leave Tavern
+                    </Button>
+                  </>
+                )}
+              </div>
           </div>
         </div>
       </nav>
@@ -125,12 +154,14 @@ export const DashboardPage = () => {
         </div>
 
         {/* Empty State */}
-        {campaigns.length === 0 && (
-          <Card className="bg-[#f4e4bc] border-4 border-[#8B4513] shadow-[8px_8px_0_#000] p-12 text-center">
-            <p className="text-[#8B4513] text-lg font-serif">
-              The tavern is quiet... No tales have been shared yet. 🍺
-            </p>
-          </Card>
+        {(isLoading ? (
+          <div className="text-center py-12">
+            <p className="text-[#8B4513] text-lg font-serif">Loading tales from the archives... 📚</p>
+          </div>
+        ) : campaigns.length === 0) && (
+          <div className="text-center py-12">
+            <p className="text-[#8B4513] text-lg font-serif">The tavern is quiet... No tales have been shared yet. 🍺</p>
+          </div>
         )}
       </main>
     </div>

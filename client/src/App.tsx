@@ -8,6 +8,7 @@ import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { CreateCampaignPage } from './pages/CreateCampaignPage';
+import { ProfilePage } from './pages/ProfilePage';
 const queryClient = new QueryClient();
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
                 } 
               />
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              <Route path="/profile/:username" element={<ProfilePage />} />
             </Routes>
             <Notifications />
           </BrowserRouter>
