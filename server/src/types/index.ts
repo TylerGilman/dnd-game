@@ -28,4 +28,5 @@ export interface Comment {
   post: Post;
   content: string;
   createdAt: number;
+  updatedAt: number;
 }

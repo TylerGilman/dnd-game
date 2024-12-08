@@ -49,7 +49,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 
 // Handle 404s
 app.use((req, res) => {
-  res.status(404).json({ error: 'Not Found' });
+  res.status(404).json({ error: 'URL Not Found' });
 });
 
 mongoose.connect(config.mongoUri)
