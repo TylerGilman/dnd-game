@@ -9,7 +9,7 @@ export interface IPost extends mongoose.Document{
     title: string;
     description: string;
     setup: string;
-    upvoteCount: number;
+    upvoteBy: mongoose.Types.ObjectId[];
     createdAt: Date;
 }
 
@@ -32,12 +32,27 @@ const postSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    upvoteCount: {
-        type: Number,
-        default: 0
-    }
+    upvoteBy: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            default: []
+        }
+    ]
 },{
-    timestamps: true
+    timestamps: true,
+    toJSON: {
+        transform: function (doc, ret) {
+            delete ret.upvoteBy;
+            return ret;
+        }
+    },
+    toObject: {
+        transform: function (doc, ret) {
+            delete ret.upvoteBy;
+            return ret;
+        }
+    }
 });
 
 postSchema.plugin(AutoIncrement, { inc_field: 'pid'});

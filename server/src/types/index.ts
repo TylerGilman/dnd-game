@@ -25,7 +25,7 @@ export interface Post {
   title: string;
   description: string;
   setup: string;
-  upvoteCount: number;
+  upvoteBy: User[];
   createdAt: number;
 }
 
