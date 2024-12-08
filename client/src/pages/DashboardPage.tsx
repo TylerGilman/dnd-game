@@ -32,6 +32,7 @@ const FriendsList = ({ friends, onRemoveFriend }) => (
           <Button 
             variant="ghost" 
             size="sm"
+            className="bg-white"
             onClick={() => onRemoveFriend(friend.id)}
           >
             <X className="h-4 w-4" />
@@ -117,7 +118,7 @@ export const DashboardPage = () => {
             <div className="flex items-center">
               <h1 className="text-xl font-bold text-gray-900">D&D Text Adventure</h1>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center bg-white space-x-4">
               <span className="text-gray-700">Welcome, {user?.username}!</span>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -126,7 +127,7 @@ export const DashboardPage = () => {
                     Friends
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuContent align="end" className="w-56 bg-white">
                   <DropdownMenuItem onSelect={() => handleAddFriend('newFriend')}>
                     Add Friend
                   </DropdownMenuItem>

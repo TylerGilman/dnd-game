@@ -69,14 +69,14 @@ const AddFriendDialog: React.FC<AddFriendDialogProps> = ({ onAddFriend }) => {
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="sm" className="text-slate-200 hover:text-white hover:bg-slate-800">
+        <Button variant="ghost" size="sm" className="bg-white text-slate-200 hover:text-white hover:bg-slate-800">
           <UserPlus className="h-4 w-4 mr-2" />
           Add Friend
         </Button>
       </DialogTrigger>
       <DialogContent className="bg-slate-900 border-slate-800">
         <DialogHeader>
-          <DialogTitle className="text-slate-200">Add Friend</DialogTitle>
+          <DialogTitle className="text-slate-200 bg-white">Add Friend</DialogTitle>
         </DialogHeader>
         
         <div className="space-y-4">
