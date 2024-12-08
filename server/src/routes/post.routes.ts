@@ -11,8 +11,8 @@ router.get('/search', authOptional, postController.searchPosts);
 router.get('/:pid', authOptional, postController.getPost);
 
 router.get('/', authOptional, postController.getPosts);
-
-router.put('/:pid', auth, postController.updatePost);
+//@ts-ignore
+router.patch('/:pid', auth, postController.updatePost);
 //@ts-ignore
 router.delete('/:pid', auth, postController.deletePost);
 //@ts-ignore
