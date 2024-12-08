@@ -11,7 +11,13 @@ export const authController = {
         try {
             const {username, email, password, isAdmin} = req.body;
 
-            // Check if user exists
+            const usernameRegex = /^[a-zA-Z0-9]+$/;
+            if (!usernameRegex.test(username)) {
+                return res.status(400).json({
+                    error: 'Username can only be alphanumeric'
+                });
+            }
+
             const existingUser = await User.findOne({
                 $or: [{email}, {username}]
             });
