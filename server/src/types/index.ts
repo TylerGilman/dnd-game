@@ -19,12 +19,13 @@ export interface User {
 
 // TODO: image of each post
 export interface Post {
+  pid: number;
   id: string;
   user: User;
   title: string;
   description: string;
   setup: string;
-  upvoteCount: number;
+  upvoteBy: User[];
   createdAt: number;
 }
 

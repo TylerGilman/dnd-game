@@ -1,19 +1,21 @@
 import express from 'express';
-import { postController } from '../controllers/post.controller';
-import { auth } from '../middleware/auth';
+import {postController} from '../controllers/post.controller';
+import {auth, authOptional} from '../middleware/auth';
 
 const router = express.Router();
 //@ts-ignore
 router.post('/create', auth, postController.createPost);
 //@ts-ignore
-router.get('/:postId', postController.getPost);
-
-router.get('/', postController.getPosts);
-
-router.put('/:postId', auth, postController.updatePost);
+router.get('/search', authOptional, postController.searchPosts);
 //@ts-ignore
-router.delete('/:postId', auth, postController.deletePost);
+router.get('/:pid', authOptional, postController.getPost);
 
-router.post('/:postId/upvote', auth, postController.upvotePost);
+router.get('/', authOptional, postController.getPosts);
+
+router.put('/:pid', auth, postController.updatePost);
+//@ts-ignore
+router.delete('/:pid', auth, postController.deletePost);
+//@ts-ignore
+router.post('/:pid/upvote', auth, postController.upvotePost);
 
 export default router;

@@ -31,6 +31,7 @@
     "install": "^0.13.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.8.4",
+    "mongoose-sequence": "^6.0.1",
     "npm": "^10.9.0",
     "openai": "^4.72.0",
     "socket.io": "^4.8.1"

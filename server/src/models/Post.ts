@@ -1,11 +1,15 @@
 import mongoose from "mongoose";
+// @ts-ignore
+import AutoIncrementFactory from 'mongoose-sequence';
+
+const AutoIncrement = AutoIncrementFactory(mongoose);
 
 export interface IPost extends mongoose.Document{
     user: mongoose.Types.ObjectId;
     title: string;
     description: string;
     setup: string;
-    upvoteCount: number;
+    upvoteBy: mongoose.Types.ObjectId[];
     createdAt: Date;
 }
 
@@ -28,12 +32,29 @@ const postSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    upvoteCount: {
-        type: Number,
-        default: 0
-    }
+    upvoteBy: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            default: []
+        }
+    ]
 },{
-    timestamps: true
+    timestamps: true,
+    toJSON: {
+        transform: function (doc, ret) {
+            delete ret.upvoteBy;
+            return ret;
+        }
+    },
+    toObject: {
+        transform: function (doc, ret) {
+            delete ret.upvoteBy;
+            return ret;
+        }
+    }
 });
 
+postSchema.plugin(AutoIncrement, { inc_field: 'pid'});
 export const Post = mongoose.model<IPost>("Post", postSchema);
+
