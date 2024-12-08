@@ -3,6 +3,7 @@ export interface User {
   isAdmin: boolean;
   username: string;
   email: string;
+  tagline: string;
   password: string;
   following: User[];
 }
@@ -26,6 +27,7 @@ export interface Post {
   description: string;
   setup: string;
   upvoteBy: User[];
+  isHidden: boolean;
   createdAt: number;
 }
 

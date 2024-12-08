@@ -2,12 +2,13 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 
 export interface IUser extends mongoose.Document {
+    _id: mongoose.Types.ObjectId;
     username: string;
     email: string;
+    tagline: string;
     password: string;
     isAdmin: boolean;
     following: mongoose.Types.ObjectId[];
-
     comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -22,6 +23,11 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
+    tagline: {
+        type: String,
+        required: false,
+        default: '',
+    },
     password: {
         type: String,
         required: true
@@ -34,22 +40,6 @@ const userSchema = new mongoose.Schema({
         type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
         default: []
     }
-
-    // TODO: profile picture and following
-
-    // commenting now for simplicity
-    // friends: [{
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'User'
-    // }],
-    // gameInvites: [{
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'Game'
-    // }],
-    // characters: [{
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'Character'
-    // }]
 }, {
     timestamps: true
 });

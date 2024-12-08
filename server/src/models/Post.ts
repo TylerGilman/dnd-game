@@ -5,11 +5,14 @@ import AutoIncrementFactory from 'mongoose-sequence';
 const AutoIncrement = AutoIncrementFactory(mongoose);
 
 export interface IPost extends mongoose.Document{
+    _id: mongoose.Types.ObjectId;
+    pid: number;
     user: mongoose.Types.ObjectId;
     title: string;
     description: string;
     setup: string;
     upvoteBy: mongoose.Types.ObjectId[];
+    isHidden: boolean;
     createdAt: Date;
 }
 
@@ -38,7 +41,12 @@ const postSchema = new mongoose.Schema({
             ref: 'User',
             default: []
         }
-    ]
+    ],
+    isHidden: {
+        type: Boolean,
+        required: true,
+        default: false,
+    },
 },{
     timestamps: true,
     toJSON: {
