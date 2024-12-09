@@ -4,10 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { useNotification } from '../context/NotificationContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, PlusCircle, Scroll, User } from 'lucide-react';
+import { Search, PlusCircle, Scroll, User, ThumbsUp } from 'lucide-react';
 import { api } from '../services/api';
 import debounce from 'lodash/debounce';
-
 import { TavernInterior } from '../components/theme/TavernInterior';
 import { NPCDialog } from '../components/theme/NPCDialog';
 import placeholderFace from '@/assets/placeholder-face.webp';
@@ -35,9 +34,7 @@ export const DashboardPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-
   const [isSearching, setIsSearching] = useState(false);
-  const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const loadCampaigns = async () => {
@@ -56,9 +53,14 @@ export const DashboardPage = () => {
     loadCampaigns();
   }, [showNotification]);
 
+  const handleLogout = () => {
+    logout();
+    showNotification('🚪 Farewell, adventurer!', 'success');
+    navigate('/login');
+  };
+
   const debouncedSearch = debounce(async (query: string) => {
     if (!query.trim()) {
-      // If search is empty, load all campaigns
       try {
         const token = localStorage.getItem('token');
         const response = await api.getCampaigns(token);
@@ -89,14 +91,43 @@ export const DashboardPage = () => {
     debouncedSearch(query);
   };
 
-  const handleLogout = () => {
-    logout();
-    showNotification('🚪 Farewell, adventurer!', 'success');
-    navigate('/login');
-  };
-
   const handleCreateCampaign = () => {
     navigate('/campaigns/new');
+  };
+
+  const handleUpvote = async (campaign: Campaign) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        showNotification('You must be logged in to upvote', 'error');
+        return;
+      }
+
+      const response = await api.toggleUpvote(campaign.cid, token);
+      
+      setCampaigns(prevCampaigns => 
+        prevCampaigns.map(c => {
+          if (c.cid === campaign.cid) {
+            return {
+              ...c,
+              upvoteCount: c.isUpvoted ? (c.upvoteCount || 1) - 1 : (c.upvoteCount || 0) + 1,
+              isUpvoted: !c.isUpvoted
+            };
+          }
+          return c;
+        })
+      );
+
+      showNotification(
+        campaign.isUpvoted 
+          ? 'Removed your vote from the tale' 
+          : 'Added your vote to the tale', 
+        'success'
+      );
+    } catch (error) {
+      console.error('Failed to toggle upvote:', error);
+      showNotification('Failed to update vote', 'error');
+    }
   };
 
   return (
@@ -153,22 +184,51 @@ export const DashboardPage = () => {
             {campaigns.map((campaign) => (
               <div
                 key={campaign._id}
-                onClick={() => navigate(`/campaigns/${campaign.cid}`)}
                 className="relative bg-parchment border-2 border-[#8B4513] p-4 cursor-pointer 
-                           transform rotate-[-2deg] hover:rotate-0 hover:translate-x-[2px] hover:translate-y-[2px] transition-transform rounded-lg"
+                         transform rotate-[-2deg] hover:rotate-0 hover:translate-x-[2px] hover:translate-y-[2px] 
+                         transition-transform rounded-lg"
               >
-                {/* Just use an emoji as a pin at the top */}
                 <div className="absolute top-[-10px] left-1/2 transform -translate-x-1/2 text-xl">
                   📍
                 </div>
 
-                <h2 className="text-[#2c1810] text-xl font-bold mb-2 flex items-center gap-2">
-                  <Scroll className="h-5 w-5 text-[#2c1810]" />
-                  {campaign.title}
-                </h2>
-                <p className="text-[#2c1810] mb-4">{campaign.description}</p>
-                <div className="flex justify-between text-sm text-[#2c1810]">
-                  <span>🎲 {campaign.upvoteCount ?? campaign.upvotes.length} nod</span>
+                <div className="mb-2">
+                  <h2 className="text-[#2c1810] text-xl font-bold flex items-center gap-2">
+                    <Scroll className="h-5 w-5 text-[#2c1810]" />
+                    {campaign.title}
+                  </h2>
+                  <div className="flex items-center text-sm text-[#8B4513] mt-1">
+                    <User className="h-4 w-4 mr-1" />
+                    <span>Posted by {campaign.user.username}</span>
+                  </div>
+                </div>
+
+                <div 
+                  className="text-[#2c1810] mb-4 cursor-pointer"
+                  onClick={() => navigate(`/campaigns/${campaign.cid}`)}
+                >
+                  {campaign.description}
+                </div>
+
+                <div className="flex justify-between items-center text-sm text-[#8B4513]">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleUpvote(campaign);
+                    }}
+                    className={`flex items-center gap-1 transition-colors ${
+                      campaign.isUpvoted 
+                        ? 'text-[#2c1810] font-bold' 
+                        : 'text-[#8B4513] hover:text-[#2c1810]'
+                    }`}
+                  >
+                    <ThumbsUp 
+                      className={`h-4 w-4 ${
+                        campaign.isUpvoted ? 'fill-current' : ''
+                      }`} 
+                    />
+                    <span>{campaign.upvoteCount || 0} votes</span>
+                  </button>
                   <span>{new Date(campaign.createdAt).toLocaleDateString()}</span>
                 </div>
               </div>

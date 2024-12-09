@@ -138,7 +138,22 @@ async updateCampaign(cid: number, data: { title?: string; description?: string; 
 
     return response.json();
   },
+  async toggleUpvote(cid: number, token: string) {
+    const response = await fetch(`${API_URL}/api/campaigns/${cid}/upvote`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json'
+      }
+    });
 
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to toggle upvote');
+    }
+
+    return response.json();
+  },
   async getCampaigns(token?: string) {
     const headers: Record<string, string> = {
       'Accept': 'application/json'

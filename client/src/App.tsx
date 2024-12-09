@@ -10,6 +10,7 @@ import { DashboardPage } from './pages/DashboardPage';
 import { CreateCampaignPage } from './pages/CreateCampaignPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { EditCampaignPage } from './pages/EditCampaignPage';
+import { CampaignDetailsPage } from './pages/CampaignDetailsPage';
 const queryClient = new QueryClient();
 
 function App() {
@@ -36,6 +37,10 @@ function App() {
                     <CreateCampaignPage />
                   </PrivateRoute>
                 } 
+              />
+              <Route 
+                path="/campaigns/:cid" 
+                element={<CampaignDetailsPage />} 
               />
               <Route 
                 path="/campaigns/edit/:cid" 
