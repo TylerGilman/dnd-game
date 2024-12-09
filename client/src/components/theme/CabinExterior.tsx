@@ -1,32 +1,28 @@
 import React from 'react';
-import { SnowBank, SnowAccents} from './SnowEffects';
+import { SnowBank, SnowAccents } from './SnowEffects';
+
 interface TavernSignProps {
   title: string;
 }
 
 export const TavernSign = ({ title }: TavernSignProps) => (
-  <div className="text-center relative">
-    <div className="relative inline-block max-w-md">
-      {/* Wooden sign background */}
-      <div className="absolute inset-0 bg-[#654321] rounded-lg transform rotate-3" />
-      <div className="absolute inset-0 bg-[#8B4513] rounded-lg transform -rotate-2" />
-      
-      {/* Sign text */}
-      <div className="relative bg-[#8B4513] p-6 rounded-lg transform -rotate-1 border-4 border-[#654321] shadow-xl">
-        <h1 className="text-[#DEB887] font-serif text-4xl font-bold tracking-wider">
-          {title}
-        </h1>
-        {/* Sign nails */}
-        <div className="absolute top-2 left-4 w-2 h-2 rounded-full bg-[#DEB887]" />
-        <div className="absolute top-2 right-4 w-2 h-2 rounded-full bg-[#DEB887]" />
-        <div className="absolute bottom-2 left-4 w-2 h-2 rounded-full bg-[#DEB887]" />
-        <div className="absolute bottom-2 right-4 w-2 h-2 rounded-full bg-[#DEB887]" />
-      </div>
-
-      {/* Chains holding the sign */}
-      <div className="absolute -top-8 left-1/4 w-1 h-8 bg-gradient-to-b from-[#DEB887] to-[#8B4513]" />
-      <div className="absolute -top-12 right-1/4 w-1 h-12 bg-gradient-to-b from-[#DEB887] to-[#8B4513]" />
+  <div className="relative inline-block">
+    {/* The sign background layers for a subtle rustic effect */}
+    <div className="absolute inset-0 bg-[#654321] rounded-lg rotate-1" />
+    <div className="absolute inset-0 bg-[#8B4513] rounded-lg -rotate-1" />
+    <div className="relative bg-[#8B4513] p-6 rounded-lg border-4 border-[#654321] shadow-xl">
+      <h1 className="text-[#DEB887] font-serif text-4xl font-bold tracking-wide">
+        {title}
+      </h1>
+      {/* Nails on the sign */}
+      <div className="absolute top-2 left-4 w-2 h-2 bg-[#DEB887] rounded-full" />
+      <div className="absolute top-2 right-4 w-2 h-2 bg-[#DEB887] rounded-full" />
+      <div className="absolute bottom-2 left-4 w-2 h-2 bg-[#DEB887] rounded-full" />
+      <div className="absolute bottom-2 right-4 w-2 h-2 bg-[#DEB887] rounded-full" />
     </div>
+    {/* Chains: left shorter, right longer to simulate a slant */}
+    <div className="absolute -top-6 left-1/4 w-1 h-6 bg-gradient-to-b from-[#DEB887] to-[#8B4513]" />
+    <div className="absolute -top-10 right-1/4 w-1 h-10 bg-gradient-to-b from-[#DEB887] to-[#8B4513]" />
   </div>
 );
 
@@ -36,34 +32,30 @@ interface CabinDoorProps {
 
 export const CabinDoor = ({ children }: CabinDoorProps) => (
   <div className="relative max-w-md mx-auto">
-    {/* Door frame outer glow */}
+    {/* Outer glow for the door frame */}
     <div className="absolute -inset-4 bg-[#DEB887]/10 blur-lg rounded-lg" />
-    
-    {/* Door and frame */}
+
     <div className="relative bg-gradient-to-b from-[#8B4513] to-[#654321] p-8 rounded-lg">
-      {/* Wood grain texture */}
+      {/* Subtle wood grain overlay */}
       <div 
         className="absolute inset-0 opacity-10 mix-blend-overlay"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='20' viewBox='0 0 100 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M21.184 20c.357-.13.72-.264 1.088-.402l1.768-.661C33.64 15.347 39.647 14 50 14c10.271 0 15.362 1.222 24.629 4.928.955.383 1.869.74 2.75 1.072h6.225c-2.51-.73-5.139-1.691-8.233-2.928C65.888 13.278 60.562 12 50 12c-10.626 0-16.855 1.397-26.66 5.063l-1.767.662c-2.475.923-4.66 1.674-6.724 2.275h6.335zm0-20C13.258 2.892 8.077 4 0 4V2c5.744 0 9.951-.574 14.85-2h6.334zM77.38 0C85.239 2.966 90.502 4 100 4V2c-6.842 0-11.386-.542-16.396-2h-6.225zM0 14c8.44 0 13.718-1.21 22.272-4.402l1.768-.661C33.64 5.347 39.647 4 50 4c10.271 0 15.362 1.222 24.629 4.928C84.112 12.722 89.438 14 100 14v-2c-10.271 0-15.362-1.222-24.629-4.928C65.888 3.278 60.562 2 50 2 39.374 2 33.145 3.397 23.34 7.063l-1.767.662C13.223 10.84 8.163 12 0 12v2z' fill='%23000000' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg ... %3E%3C/svg%3E")`,
           backgroundSize: '100px 20px'
         }}
       />
-
-      {/* Door frame details */}
       <div className="relative border-8 border-[#654321] rounded-lg shadow-[inset_0_0_100px_rgba(0,0,0,0.7)] bg-[#8B4513]">
-        {/* Door hardware */}
+        {/* Door handle/hardware */}
         <div className="absolute -right-3 top-1/2 transform -translate-y-1/2 flex flex-col items-center gap-2">
           <div className="w-6 h-20 bg-[#654321] rounded-full shadow-inner" />
           <div className="w-4 h-4 bg-[#DEB887] rounded-full" />
         </div>
 
-        {/* Door content */}
         <div className="relative p-6">
           {children}
         </div>
 
-        {/* Wood planks */}
+        {/* Horizontal planks */}
         <div className="absolute inset-0 pointer-events-none">
           {[...Array(3)].map((_, i) => (
             <div
@@ -76,20 +68,15 @@ export const CabinDoor = ({ children }: CabinDoorProps) => (
       </div>
     </div>
 
-    {/* Snow accumulation */}
+    {/* Snow accumulation on top of door */}
     <div className="absolute -top-2 left-0 right-0 h-4 bg-white/30 blur-sm rounded-full" />
   </div>
 );
 
-interface ForestBackgroundProps {
-  children: React.ReactNode;
-}
-
 export const CabinStructure = ({ children }: { children: React.ReactNode }) => (
   <div className="relative mx-auto max-w-3xl">
-    {/* Main cabin structure with solid walls */}
-    <div className="relative p-8 bg-[#2c1810] rounded-lg shadow-2xl">
-      {/* Wood texture background for walls */}
+    <div className="relative p-8 bg-[#2c1810] rounded-lg shadow-2xl overflow-visible">
+      {/* Interior wall pattern */}
       <div 
         className="absolute inset-0 rounded-lg"
         style={{
@@ -110,7 +97,6 @@ export const CabinStructure = ({ children }: { children: React.ReactNode }) => (
       {/* Roof */}
       <div className="absolute -top-20 -left-8 -right-8 h-32">
         <div className="absolute inset-0 bg-[#1a1209] transform skew-y-6">
-          {/* Roof texture */}
           <div 
             className="absolute inset-0"
             style={{
@@ -131,9 +117,7 @@ export const CabinStructure = ({ children }: { children: React.ReactNode }) => (
         </div>
       </div>
 
-      {/* Interior walls with solid background */}
-      <div className="relative z-10 bg-[#241309] p-8 rounded-lg">
-        {/* Wood grain texture for interior */}
+      <div className="relative z-10 bg-[#241309] p-8 rounded-lg overflow-visible min-h-[600px]">
         <div 
           className="absolute inset-0 rounded-lg mix-blend-overlay"
           style={{
@@ -149,25 +133,33 @@ export const CabinStructure = ({ children }: { children: React.ReactNode }) => (
           }}
         />
 
+        {/* Sign at the top (inside house) to appear below roof */}
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 z-40">
+          <TavernSign title="The Adventurer's Tavern" />
+        </div>
+
+        {/* The door and form area below */}
+        <div className="relative z-20 mt-40">
+          {children}
+        </div>
+
         {/* Windows */}
         <div className="absolute left-4 top-4 w-16 h-24 bg-[#120d06] rounded-lg overflow-hidden">
-          {/* Window frame */}
           <div className="absolute inset-2 grid grid-cols-2 gap-2 bg-[#0a0f18]/80 p-1">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="bg-yellow-900/20 rounded-sm">
+              <div key={i} className="bg-yellow-900/20 rounded-sm relative">
                 <div className="absolute inset-0 bg-yellow-500/5 animate-pulse" 
                      style={{ animationDelay: `${i * 0.5}s` }} />
               </div>
             ))}
           </div>
-          {/* Window glow */}
           <div className="absolute inset-0 bg-yellow-900/10" />
         </div>
 
         <div className="absolute right-4 top-4 w-16 h-24 bg-[#120d06] rounded-lg overflow-hidden">
           <div className="absolute inset-2 grid grid-cols-2 gap-2 bg-[#0a0f18]/80 p-1">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="bg-yellow-900/20 rounded-sm">
+              <div key={i} className="bg-yellow-900/20 rounded-sm relative">
                 <div className="absolute inset-0 bg-yellow-500/5 animate-pulse" 
                      style={{ animationDelay: `${i * 0.5}s` }} />
               </div>
@@ -175,14 +167,9 @@ export const CabinStructure = ({ children }: { children: React.ReactNode }) => (
           </div>
           <div className="absolute inset-0 bg-yellow-900/10" />
         </div>
-
-        {/* Door area */}
-        <div className="relative z-20">
-          {children}
-        </div>
       </div>
 
-      {/* Lanterns with glow effect */}
+      {/* Lanterns */}
       {[-1, 1].map((x) => (
         <div 
           key={x} 
@@ -193,7 +180,6 @@ export const CabinStructure = ({ children }: { children: React.ReactNode }) => (
             <div className="absolute inset-1 bg-yellow-500/20 animate-pulse">
               <div className="absolute inset-0 bg-gradient-to-t from-yellow-500/20 to-transparent" />
             </div>
-            {/* Lantern light glow */}
             <div className="absolute -inset-4 bg-yellow-500/10 blur-xl rounded-full" />
           </div>
         </div>
@@ -206,9 +192,7 @@ export const CabinStructure = ({ children }: { children: React.ReactNode }) => (
         <div 
           key={i}
           className="w-full h-4 bg-[#1a1209] rounded mb-1"
-          style={{
-            transform: `translateY(${i * 4}px)`
-          }}
+          style={{ transform: `translateY(${i * 4}px)` }}
         >
           <div className="absolute inset-0 bg-white/5" />
         </div>
@@ -221,10 +205,7 @@ export const CabinStructure = ({ children }: { children: React.ReactNode }) => (
 
 export const ForestBackground = ({ children }: { children: React.ReactNode }) => (
   <div className="relative min-h-screen bg-[#0a0f18]">
-    {/* Forest background */}
     <div className="fixed inset-0 bg-gradient-to-b from-[#0a0f18] to-[#1a2633]" />
-    
-    {/* Stars */}
     <div className="fixed inset-0">
       {[...Array(50)].map((_, i) => (
         <div
@@ -238,11 +219,7 @@ export const ForestBackground = ({ children }: { children: React.ReactNode }) =>
         />
       ))}
     </div>
-
-    {/* Simple white horizon */}
     <div className="fixed bottom-0 left-0 right-0 h-48 bg-white" />
-
-    {/* Actual falling snow */}
     <div className="fixed inset-0 pointer-events-none overflow-hidden">
       {[...Array(30)].map((_, i) => (
         <div
@@ -263,8 +240,6 @@ export const ForestBackground = ({ children }: { children: React.ReactNode }) =>
         </div>
       ))}
     </div>
-
-    {/* Content */}
     <div className="relative z-10">
       {children}
     </div>

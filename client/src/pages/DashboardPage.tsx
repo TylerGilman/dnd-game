@@ -1,4 +1,3 @@
-// /client/src/pages/DashboardPage.tsx
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -71,7 +70,7 @@ export const DashboardPage = () => {
     <TavernInterior>
       <div className="max-w-3xl mx-auto mt-8 mb-12">
         <NPCDialog speaker="Jorje the Tavernkeeper" icon={placeholderFace}>
-          "Welcome, {user?.username || 'stranger'}! The bounty board awaits. Post your quests or claim those posted by others. The candlelight flickers, secrets whisper in the dark wood. Choose wisely!"
+          "Welcome, {user?.username || 'stranger'}! This adventure board awaits your mark. Post new quests or vote for quests that suit your fancy!"
         </NPCDialog>
       </div>
 
@@ -121,8 +120,10 @@ export const DashboardPage = () => {
                 className="relative bg-parchment border-2 border-[#8B4513] p-4 cursor-pointer 
                            transform rotate-[-2deg] hover:rotate-0 hover:translate-x-[2px] hover:translate-y-[2px] transition-transform rounded-lg"
               >
-                {/* Pin image */}
-                <img src="/pin.png" alt="pin" className="w-5 h-5 absolute top-[-10px] left-1/2 transform -translate-x-1/2" />
+                {/* Just use an emoji as a pin at the top */}
+                <div className="absolute top-[-10px] left-1/2 transform -translate-x-1/2 text-xl">
+                  📍
+                </div>
 
                 <h2 className="text-[#2c1810] text-xl font-bold mb-2 flex items-center gap-2">
                   <Scroll className="h-5 w-5 text-[#2c1810]" />

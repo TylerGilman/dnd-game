@@ -23,8 +23,6 @@ export const RegisterPage = () => {
       <Snowfall />
       <div className="min-h-screen flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-3xl space-y-8">
-          <TavernSign title="The Adventurer's Tavern" />
-
           <NPCDialog>
             *A raspy voice emanates through the thick wooden door*
             <br /><br />
@@ -40,15 +38,15 @@ export const RegisterPage = () => {
             </CabinDoor>
           </CabinStructure>
 
-          <p className="text-center text-[#DEB887] font-serif mt-4">
-            Already a regular?{' '}
-            <Link 
-              to="/login" 
-              className="font-medium hover:text-[#E8B999] underline transition-colors duration-300"
-            >
-              *Step right up to the door*
-            </Link>
-          </p>
+        <p className="text-center text-[#DEB887] font-serif mt-4 text-lg">
+          Already a regular?{' '}
+          <Link 
+            to="/login"
+            className="font-bold text-[#2c1810] underline underline-offset-4 hover:text-[#8B4513] transition-colors duration-300"
+          >
+            *Step right up to the door*
+          </Link>
+        </p>
         </div>
       </div>
     </ForestBackground>

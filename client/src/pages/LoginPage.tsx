@@ -138,8 +138,6 @@ export const LoginPage = () => {
       <Snowfall />
       <div className="min-h-screen flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-3xl space-y-8">
-          <TavernSign title="The Adventurer's Tavern" />
-
           <NPCDialog>
             *A warm, friendly voice calls through the door*
             <br /><br />
@@ -154,11 +152,11 @@ export const LoginPage = () => {
             </CabinDoor>
           </CabinStructure>
 
-          <p className="text-center text-[#DEB887] font-serif mt-4">
+          <p className="text-center text-[#DEB887] font-serif mt-4 text-lg">
             New to these parts?{' '}
             <Link 
-              to="/register" 
-              className="font-medium hover:text-[#E8B999] underline transition-colors duration-300"
+              to="/register"
+              className="font-bold text-[#2c1810] underline underline-offset-4 hover:text-[#8B4513] transition-colors duration-300"
             >
               *Join our merry band of adventurers*
             </Link>

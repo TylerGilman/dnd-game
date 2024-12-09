@@ -3,7 +3,7 @@ import React from 'react';
 export const TavernInterior = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="min-h-screen relative bg-dark-wood">
-      {/* Candle emoji with flicker (tailwind animation) */}
+      {/* Candle with flicker animation */}
       <div
         className="absolute top-4 right-4 text-3xl select-none animate-candleFlicker"
         style={{ filter: 'drop-shadow(0 0 5px #ffd700)' }}
