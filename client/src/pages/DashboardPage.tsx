@@ -146,7 +146,7 @@ export const DashboardPage = () => {
                 isSearching ? 'animate-spin' : ''
               }`} />
               <Input
-                placeholder="Search the bounty board..."
+                placeholder="Search the adventure board..."
                 value={searchQuery}
                 onChange={(e) => handleSearch(e.target.value)}
                 className="pl-10 bg-[#fff8dc] border-2 border-[#8B4513] 
@@ -161,7 +161,7 @@ export const DashboardPage = () => {
                            px-6 h-12 rounded-lg border-2 border-[#f4e4bc] flex items-center gap-2"
               >
                 <PlusCircle className="h-5 w-5" />
-                Post a New Bounty
+                Post a New Adventure
               </Button>
             )}
           </div>
