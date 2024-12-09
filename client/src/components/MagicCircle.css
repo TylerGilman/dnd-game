@@ -1,0 +1,74 @@
+.magic-circle-container {
+  position: relative;
+  width: 128px;
+  height: 128px;
+  margin: 0 auto;
+}
+
+.magic-circle-outer {
+  position: absolute;
+  inset: 0;
+  border: 4px solid #8B4513;
+  border-radius: 50%;
+  animation: spin 8s linear infinite;
+}
+
+.magic-circle-inner {
+  position: absolute;
+  inset: 16px;
+  border: 2px solid #8B4513;
+  border-radius: 50%;
+  animation: spin-reverse 6s linear infinite;
+}
+
+.magic-sparkle {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  margin-left: -8px;
+  background: #FFD700;
+  border-radius: 50%;
+  filter: blur(4px);
+}
+
+.magic-rune {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  color: #8B4513;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.magic-glow {
+  position: absolute;
+  inset: 32px;
+  background: rgba(255, 215, 0, 0.3);
+  border-radius: 50%;
+  filter: blur(8px);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.generating-text {
+  color: #8B4513;
+  font-family: serif;
+  font-size: 18px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes spin-reverse {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}

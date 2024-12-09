@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollText, Feather } from 'lucide-react';
 import { api } from '../services/api';
+import { CampaignGenerator } from "../components/CampaignGenerator";
 
 interface CampaignForm {
   title: string;
@@ -103,6 +104,16 @@ const handleSubmit = async (e: React.FormEvent) => {
                 />
               </div>
 
+              <div className="space-y-8">
+                <CampaignGenerator 
+                  onGenerated={(generatedFields) => {
+                    setForm(prev => ({
+                      ...prev,
+                      ...generatedFields
+                    }));
+                  }}
+                  currentFields={form}
+                />
               <div className="bg-[#deb887] p-6 rounded-lg border-2 border-[#8B4513]">
                 <label htmlFor="description" className="block text-lg font-serif font-bold text-[#8B4513] mb-2">
                   📜 The Hook
@@ -156,6 +167,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                 >
                   {isSubmitting ? '✒️ Inscribing...' : '✨ Inscribe Tale'}
                 </Button>
+              </div>
               </div>
             </form>
           </CardContent>
