@@ -3,10 +3,20 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useNotification } from '../context/NotificationContext';
 import { Button } from '@/components/ui/button';
-import { ThumbsUp, User, ArrowLeft, Edit, Trash2 } from 'lucide-react';
+import { ThumbsUp, User, ArrowLeft, Edit, Trash2, MessageSquare } from 'lucide-react';
 import { api } from '../services/api';
 import { TavernInterior } from '../components/theme/TavernInterior';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+
+interface Comment {
+  _id: string;
+  user: {
+    _id: string;
+    username: string;
+  };
+  content: string;
+  createdAt: string;
+}
 
 interface Campaign {
   _id: string;
@@ -29,8 +39,13 @@ export const CampaignDetailsPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { showNotification } = useNotification();
+  
   const [campaign, setCampaign] = useState<Campaign | null>(null);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [newComment, setNewComment] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingComments, setIsLoadingComments] = useState(true);
+  const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   useEffect(() => {
@@ -50,6 +65,25 @@ export const CampaignDetailsPage = () => {
 
     loadCampaign();
   }, [cid, navigate, showNotification]);
+
+  useEffect(() => {
+    const loadComments = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await api.getComments(Number(cid), token);
+        setComments(response.comments);
+      } catch (error) {
+        console.error('Failed to load comments:', error);
+        showNotification('Failed to load comments', 'error');
+      } finally {
+        setIsLoadingComments(false);
+      }
+    };
+
+    if (campaign) {
+      loadComments();
+    }
+  }, [cid, campaign, showNotification]);
 
   const handleUpvote = async () => {
     if (!campaign) return;
@@ -81,6 +115,45 @@ export const CampaignDetailsPage = () => {
     } catch (error) {
       console.error('Failed to toggle upvote:', error);
       showNotification('Failed to update vote', 'error');
+    }
+  };
+
+  const handleSubmitComment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) {
+      showNotification('You must be logged in to comment', 'error');
+      return;
+    }
+    if (!newComment.trim()) return;
+
+    setIsSubmittingComment(true);
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) throw new Error('No authentication token found');
+
+      const response = await api.createComment(Number(cid), newComment, token);
+      setComments(prev => [...prev, response.comment]);
+      setNewComment('');
+      showNotification('Comment added successfully', 'success');
+    } catch (error) {
+      console.error('Failed to add comment:', error);
+      showNotification('Failed to add comment', 'error');
+    } finally {
+      setIsSubmittingComment(false);
+    }
+  };
+
+  const handleDeleteComment = async (commentId: string) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) throw new Error('No authentication token found');
+
+      await api.deleteComment(commentId, token);
+      setComments(prev => prev.filter(comment => comment._id !== commentId));
+      showNotification('Comment deleted successfully', 'success');
+    } catch (error) {
+      console.error('Failed to delete comment:', error);
+      showNotification('Failed to delete comment', 'error');
     }
   };
 
@@ -142,8 +215,9 @@ export const CampaignDetailsPage = () => {
           </Button>
         </div>
 
-        {/* Campaign Details Card */}
+        {/* Campaign Card */}
         <div className="bg-[#f4e4bc] border-4 border-[#8B4513] rounded-lg shadow-lg">
+          {/* Card Header */}
           <div className="border-b-4 border-[#8B4513] bg-[#deb887] p-6">
             <div className="flex justify-between items-start">
               <h1 className="text-3xl font-bold text-[#2c1810] font-serif mb-4">{campaign.title}</h1>
@@ -160,7 +234,6 @@ export const CampaignDetailsPage = () => {
                   <Button
                     onClick={() => setShowDeleteDialog(true)}
                     variant="destructive"
-                    className="bg-red-800"
                   >
                     <Trash2 className="h-4 w-4 mr-2" />
                     Delete
@@ -180,6 +253,7 @@ export const CampaignDetailsPage = () => {
             </div>
           </div>
 
+          {/* Campaign Content */}
           <div className="p-6 space-y-6">
             <div className="bg-[#fff8dc] p-4 rounded-lg border-2 border-[#8B4513]">
               <h2 className="text-xl font-bold text-[#2c1810] mb-2 font-serif">The Hook</h2>
@@ -191,6 +265,7 @@ export const CampaignDetailsPage = () => {
               <p className="text-[#2c1810] whitespace-pre-wrap">{campaign.content}</p>
             </div>
 
+            {/* Voting Section */}
             <div className="flex justify-between items-center pt-4 border-t-2 border-[#8B4513]">
               <button
                 onClick={handleUpvote}
@@ -204,10 +279,82 @@ export const CampaignDetailsPage = () => {
                 <span>{campaign.upvoteCount || 0} votes</span>
               </button>
             </div>
+            {/* Comments Section */}
+            <div className="mt-8 border-t-2 border-[#8B4513] pt-6">
+              <div className="flex items-center gap-2 mb-4">
+                <MessageSquare className="h-6 w-6 text-[#2c1810]" />
+                <h2 className="text-xl font-bold text-[#2c1810] font-serif">Tavern Chat</h2>
+              </div>
+              
+              {/* Comment Form */}
+              {user && (
+                <form onSubmit={handleSubmitComment} className="mb-6">
+                  <div className="flex gap-4">
+                    <textarea
+                      value={newComment}
+                      onChange={(e) => setNewComment(e.target.value)}
+                      placeholder="Share your thoughts on this tale..."
+                      className="flex-grow p-3 rounded-lg border-2 border-[#8B4513] bg-[#fff8dc] 
+                               text-[#2c1810] placeholder-[#8B4513]/60 
+                               focus:ring-2 focus:ring-[#8B4513] min-h-[100px]"
+                    />
+                    <Button
+                      type="submit"
+                      disabled={isSubmittingComment || !newComment.trim()}
+                      className="self-end bg-[#8B4513] text-[#f4e4bc] hover:bg-[#654321] 
+                               disabled:opacity-50"
+                    >
+                      {isSubmittingComment ? 'Posting...' : 'Post Comment'}
+                    </Button>
+                  </div>
+                </form>
+              )}
+
+              {/* Comments List */}
+              <div className="space-y-4">
+                {isLoadingComments ? (
+                  <p className="text-center text-[#8B4513] italic">Loading comments...</p>
+                ) : comments.length === 0 ? (
+                  <p className="text-center text-[#8B4513] italic">
+                    No comments yet. Be the first to share your thoughts!
+                  </p>
+                ) : (
+                  comments.map((comment) => (
+                    <div 
+                      key={comment._id} 
+                      className="bg-[#fff8dc] p-4 rounded-lg border-2 border-[#8B4513] relative"
+                    >
+                      <div className="flex justify-between items-start mb-2">
+                        <div className="flex items-center gap-2">
+                          <User className="h-4 w-4 text-[#8B4513]" />
+                          <span className="font-serif text-[#2c1810] font-bold">
+                            {comment.user.username}
+                          </span>
+                          <span className="text-sm text-[#8B4513]">
+                            • {new Date(comment.createdAt).toLocaleDateString()}
+                          </span>
+                        </div>
+                        {(user?._id === comment.user._id || 
+                          (campaign && user?._id === campaign.user._id)) && (
+                          <Button
+                            onClick={() => handleDeleteComment(comment._id)}
+                            variant="ghost"
+                            className="text-red-600 hover:text-red-700 p-1 h-auto"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
+                      <p className="text-[#2c1810] whitespace-pre-wrap">{comment.content}</p>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Delete Confirmation Dialog */}
+        {/* Delete Campaign Dialog */}
         <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
           <DialogContent className="bg-[#f4e4bc] border-4 border-[#8B4513]">
             <DialogHeader>

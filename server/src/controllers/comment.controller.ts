@@ -112,35 +112,46 @@ export const commentController = {
         }
     },
 
-    async deleteComment(req: AuthRequest, res: Response) {
-        try {
-            const { _id } = req.body;
-            const userId = req.user?.userId;
-            const isAdmin = req.user?.isAdmin;
-            
-            if (!_id) {
-                return res.status(400).json({ error: 'Comment ID is required.' });
-            }
-            
-            if (!userId) {
-                return res.status(401).json({ error: 'Must be logged in.' });
-            }
-            
-            const comment = await Comment.findById(_id);
-            if (!comment) {
-                return res.status(404).json({ error: 'Comment not found.' });
-            }
-            
-            if (!comment.user.equals(userId) && !isAdmin) {
-                return res.status(403).json({ error: 'Only the original commenter or admin can delete this comment.' });
-            }
-            
-            await Comment.findByIdAndDelete(_id);
+  async deleteComment(req: AuthRequest, res: Response) {
+      try {
+          const { _id } = req.body;
+          const userId = req.user?.userId;
+          const isAdmin = req.user?.isAdmin;
+          
+          if (!_id) {
+              return res.status(400).json({ error: 'Comment ID is required.' });
+          }
+          
+          if (!userId) {
+              return res.status(401).json({ error: 'Must be logged in.' });
+          }
+          
+          // Find the comment and populate the campaign's user field
+          const comment = await Comment.findById(_id).populate({
+              path: 'campaign',
+              select: 'user'
+          });
 
-            res.status(200).json({ message: 'Comment deleted successfully.' });
-        } catch (error) {
-            console.error('Delete Comment error:', error);
-            res.status(500).json({ error: 'Internal server error.' });
-        }
-    }
+          if (!comment) {
+              return res.status(404).json({ error: 'Comment not found.' });
+          }
+
+          // Check if user is either comment owner, campaign owner, or admin
+          const isCampaignOwner = (comment.campaign as any).user.toString() === userId;
+          const isCommentOwner = comment.user.toString() === userId;
+          
+          if (!isCommentOwner && !isCampaignOwner && !isAdmin) {
+              return res.status(403).json({ 
+                  error: 'Only the original commenter, campaign owner, or admin can delete this comment.' 
+              });
+          }
+          
+          await Comment.findByIdAndDelete(_id);
+
+          res.status(200).json({ message: 'Comment deleted successfully.' });
+      } catch (error) {
+          console.error('Delete Comment error:', error);
+          res.status(500).json({ error: 'Internal server error.' });
+      }
+  }
 };

@@ -138,6 +138,64 @@ async updateCampaign(cid: number, data: { title?: string; description?: string; 
 
     return response.json();
   },
+  async getComments(cid: number, token?: string) {
+    const headers: Record<string, string> = {
+      'Accept': 'application/json'
+    };
+
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const response = await fetch(`${API_URL}/api/comments/campaign/${cid}`, {
+      headers
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to fetch comments');
+    }
+
+    return response.json();
+  },
+
+  async createComment(cid: number, content: string, token: string) {
+    const response = await fetch(`${API_URL}/api/comments/create`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({ cid, content })
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to create comment');
+    }
+
+    return response.json();
+  },
+
+  async deleteComment(commentId: string, token: string) {
+    const response = await fetch(`${API_URL}/api/comments/delete`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({ _id: commentId })
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to delete comment');
+    }
+
+    return response.json();
+  },
   async toggleUpvote(cid: number, token: string) {
     const response = await fetch(`${API_URL}/api/campaigns/${cid}/upvote`, {
       method: 'POST',
