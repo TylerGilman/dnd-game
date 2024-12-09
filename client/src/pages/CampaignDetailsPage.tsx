@@ -234,6 +234,7 @@ export const CampaignDetailsPage = () => {
                   <Button
                     onClick={() => setShowDeleteDialog(true)}
                     variant="destructive"
+                    className="bg-red-800"
                   >
                     <Trash2 className="h-4 w-4 mr-2" />
                     Delete
