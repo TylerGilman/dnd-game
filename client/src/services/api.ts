@@ -1,5 +1,6 @@
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
+const simulateDelay = () => new Promise(resolve => setTimeout(resolve, 1500));
 export const api = {
   async getProfile(username: string, token?: string) {
     const headers: Record<string, string> = {
@@ -23,6 +24,7 @@ export const api = {
   },
 
   async login(email: string, password: string) {
+    await simulateDelay(); // Add delay
     const response = await fetch(`${API_URL}/api/auth/login`, {
       method: 'POST',
       headers: { 
