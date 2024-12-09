@@ -1,5 +1,5 @@
 import React from 'react';
-import { SnowBank, SnowAccents, Snowfall } from './SnowEffects';
+import { SnowBank, SnowAccents} from './SnowEffects';
 interface TavernSignProps {
   title: string;
 }

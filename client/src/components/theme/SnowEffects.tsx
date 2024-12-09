@@ -1,33 +1,56 @@
 import React from 'react';
 
-export const SnowHorizon = () => (
-  <div className="fixed bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white/30 to-transparent pointer-events-none" />
-);
+export const Snowfall = () => {
+  const baseStyle = `
+    @keyframes snowfall {
+      0% {
+        transform: translateY(-10vh) translateX(0);
+        opacity: 0;
+      }
+      10% {
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh) translateX(var(--drift));
+        opacity: 0;
+      }
+    }
+  `;
 
-// Animated falling snow
-export const Snowfall = () => (
-  <div className="fixed inset-0 pointer-events-none overflow-hidden">
-    {[...Array(30)].map((_, i) => (
-      <div
-        key={i}
-        className={`
-          absolute top-0
-          font-serif text-white text-opacity-80
-          will-change-transform
-          animate-fall-${i % 3 ? 'slow' : i % 2 ? 'slower' : 'normal'}
-        `}
-        style={{
-          left: `${Math.random() * 100}%`,
-          fontSize: `${Math.random() * 14 + 10}px`,
-          animationDelay: `${Math.random() * 5}s`,
-          filter: 'blur(1px)',
-          opacity: 0.7
-        }}
-      >
-        ❄
-      </div>
-    ))}
-  </div>
+  return (
+    <div className="fixed inset-0 pointer-events-none overflow-hidden">
+      <style>
+        {baseStyle}
+      </style>
+      {[...Array(30)].map((_, i) => {
+        const duration = 7 + Math.random() * 7;
+        const drift = -20 + Math.random() * 40;
+        
+        return (
+          <div
+            key={i}
+            style={{
+              position: 'absolute',
+              left: `${Math.random() * 100}%`,
+              top: '-20px',
+              color: 'white',
+              opacity: 0,
+              fontSize: `${Math.random() * 14 + 10}px`,
+              animation: `snowfall ${duration}s linear infinite`,
+              animationDelay: `${Math.random() * 5}s`,
+              '--drift': `${drift}px`,
+            } as React.CSSProperties}
+          >
+            ❄
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+export const SnowHorizon = () => (
+  <div className="fixed bottom-0 left-0 right-0 h-48 bg-white" />
 );
 
 // Snow bank at base of cabin

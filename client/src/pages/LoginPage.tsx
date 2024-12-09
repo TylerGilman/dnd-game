@@ -6,6 +6,7 @@ import { useNotification } from '../context/NotificationContext';
 import { api } from '../services/api';
 import { Mail, KeyRound } from 'lucide-react';
 import { ScrollButton } from '../components/theme/ThemeComponents';
+import { Snowfall } from '../components/theme/SnowEffects';
 import { 
   TavernSign, 
   NPCDialog, 
@@ -13,38 +14,6 @@ import {
   CabinStructure, 
   ForestBackground 
 } from '../components/theme/CabinExterior';
-
-// Snowflake component with different shapes and sizes
-const Snowfall = () => (
-  <div className="fixed inset-0 pointer-events-none overflow-hidden">
-    {[...Array(50)].map((_, i) => {
-      const size = Math.random() * 4 + 2;
-      const startX = Math.random() * 100;
-      const startDelay = Math.random() * 5;
-      const duration = Math.random() * 5 + 10;
-      const shape = ['❄', '❅', '❆', '✧'][Math.floor(Math.random() * 4)];
-
-      return (
-        <div
-          key={i}
-          className={`
-            absolute -top-4 text-white text-opacity-80
-            animate-float-${i % 3 ? i % 2 ? 'slow' : 'slower' : ''}
-          `}
-          style={{
-            left: `${startX}%`,
-            fontSize: `${size}px`,
-            animationDelay: `${startDelay}s`,
-            animationDuration: `${duration}s`,
-            textShadow: '0 0 3px rgba(255,255,255,0.3)'
-          }}
-        >
-          {shape}
-        </div>
-      );
-    })}
-  </div>
-);
 
 // Login form with glowing effects
 const LoginForm = () => {
