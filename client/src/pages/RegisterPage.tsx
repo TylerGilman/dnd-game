@@ -8,6 +8,7 @@ import {
   CabinStructure, 
   ForestBackground 
 } from '../components/theme/CabinExterior';
+import { Snowfall } from '../components/theme/SnowEffects';
 
 export const RegisterPage = () => {
   const navigate = useNavigate();
@@ -19,6 +20,7 @@ export const RegisterPage = () => {
 
   return (
     <ForestBackground>
+      <Snowfall />
       <div className="min-h-screen flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-3xl space-y-8">
           <TavernSign title="The Adventurer's Tavern" />
