@@ -158,5 +158,25 @@ async updateCampaign(cid: number, data: { title?: string; description?: string; 
     }
 
     return response.json();
+  },
+  async searchCampaigns(query: string, token?: string) {
+    const headers: Record<string, string> = {
+      'Accept': 'application/json'
+    };
+
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const response = await fetch(`${API_URL}/api/campaigns/search?query=${encodeURIComponent(query)}`, {
+      headers
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to search campaigns');
+    }
+
+    return response.json();
   }
 };

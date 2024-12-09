@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search, PlusCircle, Scroll, User } from 'lucide-react';
 import { api } from '../services/api';
+import debounce from 'lodash/debounce';
 
 import { TavernInterior } from '../components/theme/TavernInterior';
 import { NPCDialog } from '../components/theme/NPCDialog';
@@ -35,6 +36,9 @@ export const DashboardPage = () => {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null);
+
   useEffect(() => {
     const loadCampaigns = async () => {
       try {
@@ -52,14 +56,43 @@ export const DashboardPage = () => {
     loadCampaigns();
   }, [showNotification]);
 
+  const debouncedSearch = debounce(async (query: string) => {
+    if (!query.trim()) {
+      // If search is empty, load all campaigns
+      try {
+        const token = localStorage.getItem('token');
+        const response = await api.getCampaigns(token);
+        setCampaigns(response.campaigns);
+      } catch (error) {
+        console.error('Failed to load campaigns:', error);
+        showNotification('Failed to load campaigns', 'error');
+      }
+      setIsSearching(false);
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await api.searchCampaigns(query, token);
+      setCampaigns(response.results);
+    } catch (error) {
+      console.error('Search failed:', error);
+      showNotification('Search failed', 'error');
+    } finally {
+      setIsSearching(false);
+    }
+  }, 500);
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    debouncedSearch(query);
+  };
+
   const handleLogout = () => {
     logout();
     showNotification('🚪 Farewell, adventurer!', 'success');
     navigate('/login');
-  };
-
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
   };
 
   const handleCreateCampaign = () => {
@@ -78,7 +111,9 @@ export const DashboardPage = () => {
         <div className="bg-[#f4e4bc] border-4 border-[#8B4513] rounded-lg p-6">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-3.5 h-5 w-5 text-[#8B4513]" />
+              <Search className={`absolute left-3 top-3.5 h-5 w-5 text-[#8B4513] ${
+                isSearching ? 'animate-spin' : ''
+              }`} />
               <Input
                 placeholder="Search the bounty board..."
                 value={searchQuery}
@@ -101,14 +136,16 @@ export const DashboardPage = () => {
           </div>
         </div>
 
-        {isLoading ? (
+        {isLoading || isSearching ? (
           <div className="text-center py-12">
-            <p className="text-[#f4e4bc] text-lg">Consulting ancient scrolls... 📚</p>
+            <p className="text-[#f4e4bc] text-lg">
+              {isSearching ? 'Searching the archives... 🔍' : 'Consulting ancient scrolls... 📚'}
+            </p>
           </div>
         ) : campaigns.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-[#f4e4bc] text-lg">
-              The board is empty... Post the first quest!
+              {searchQuery ? 'No tales match your search...' : 'The board is empty... Post the first quest!'}
             </p>
           </div>
         ) : (

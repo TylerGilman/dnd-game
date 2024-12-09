@@ -76,26 +76,7 @@ export const CabinDoor = ({ children }: CabinDoorProps) => (
 export const CabinStructure = ({ children }: { children: React.ReactNode }) => (
   <div className="relative mx-auto max-w-3xl">
     <div className="relative p-8 bg-[#2c1810] rounded-lg shadow-2xl overflow-visible">
-      {/* Interior wall pattern */}
-      <div 
-        className="absolute inset-0 rounded-lg"
-        style={{
-          backgroundColor: '#2c1810',
-          backgroundImage: `
-            repeating-linear-gradient(
-              0deg,
-              #241309 0px,
-              #241309 20px,
-              #2c1810 20px,
-              #2c1810 40px
-            )
-          `,
-          opacity: 0.9
-        }}
-      />
-
-      {/* Roof */}
-      <div className="absolute -top-20 -left-8 -right-8 h-32">
+      <div className="absolute -top-20 -left-8 -right-8 h-32 z-20">
         <div className="absolute inset-0 bg-[#1a1209] transform skew-y-6">
           <div 
             className="absolute inset-0"
@@ -116,6 +97,22 @@ export const CabinStructure = ({ children }: { children: React.ReactNode }) => (
           <div className="absolute bottom-0 left-0 right-0 h-4 bg-white/20 blur-sm" />
         </div>
       </div>
+      <div 
+        className="absolute inset-0 rounded-lg z-10"
+        style={{
+          backgroundColor: '#2c1810',
+          backgroundImage: `
+            repeating-linear-gradient(
+              0deg,
+              #241309 0px,
+              #241309 20px,
+              #2c1810 20px,
+              #2c1810 40px
+            )
+          `,
+          opacity: 0.9
+        }}
+      />
 
       <div className="relative z-10 bg-[#241309] p-8 rounded-lg overflow-visible min-h-[600px]">
         <div 
@@ -133,12 +130,10 @@ export const CabinStructure = ({ children }: { children: React.ReactNode }) => (
           }}
         />
 
-        {/* Sign at the top (inside house) to appear below roof */}
-        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 z-40">
+        <div className="absolute top-8 left-1/2 transform -translate-x-1/2 z-40">
           <TavernSign title="The Adventurer's Tavern" />
         </div>
 
-        {/* The door and form area below */}
         <div className="relative z-20 mt-40">
           {children}
         </div>
