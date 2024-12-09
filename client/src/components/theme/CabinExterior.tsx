@@ -30,38 +30,6 @@ export const TavernSign = ({ title }: TavernSignProps) => (
   </div>
 );
 
-interface NPCDialogProps {
-  speaker?: string;
-  children: React.ReactNode;
-}
-
-export const NPCDialog = ({ speaker = "UNKNOWN SLURRED VOICE", children }: NPCDialogProps) => (
-  <div className="relative mb-8 z-10">
-    {/* Speech arrow */}
-    <div className="absolute -left-4 top-1/2 w-4 h-4 bg-[#2c1810] transform rotate-45 -translate-y-1/2" />
-    
-    {/* Dialog container */}
-    <div className="bg-[#2c1810]/90 backdrop-blur-sm text-[#f4e4bc] p-6 rounded-lg font-serif relative border border-[#deb887]/30">
-      {/* Speaker label */}
-      <div className="absolute left-6 top-0 transform -translate-y-full">
-        <div className="bg-[#2c1810] text-[#deb887] px-4 py-1 rounded-t-lg text-sm border-t border-x border-[#deb887]/30">
-          {speaker}
-        </div>
-      </div>
-      
-      {/* Content with avatar */}
-      <div className="flex gap-4 items-start">
-        <div className="w-16 h-16 rounded-full bg-[#654321] flex-shrink-0 border-2 border-[#deb887]/50 overflow-hidden">
-          <div className="w-full h-full bg-[#2c1810] opacity-50" />
-        </div>
-        <div className="flex-grow italic leading-relaxed">
-          {children}
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
 interface CabinDoorProps {
   children: React.ReactNode;
 }

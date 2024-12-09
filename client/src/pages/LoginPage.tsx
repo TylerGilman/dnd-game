@@ -9,12 +9,11 @@ import { ScrollButton } from '../components/theme/ThemeComponents';
 import { Snowfall } from '../components/theme/SnowEffects';
 import { 
   TavernSign, 
-  NPCDialog, 
   CabinDoor,
   CabinStructure, 
   ForestBackground 
 } from '../components/theme/CabinExterior';
-
+import { NPCDialog } from '../components/theme/NPCDialog';
 // Login form with glowing effects
 const LoginForm = () => {
   const [formData, setFormData] = useState({

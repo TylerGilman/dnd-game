@@ -51,8 +51,19 @@ module.exports = {
           '5': 'hsl(var(--chart-5))'
         }
       },
+      backgroundImage: {
+        'dark-wood': "linear-gradient(to bottom, #3a1e10, #2c1810)",
+        'parchment': "url('/torn-parchment.png')"
+      },
       keyframes: {
-        // Snow falling animations
+        candleFlicker: {
+          '0%, 100%': { filter: 'brightness(1)', opacity: '1' },
+          '40%': { filter: 'brightness(1.2)', opacity: '0.9' },
+          '60%': { filter: 'brightness(0.8)', opacity: '0.95' },
+          '80%': { filter: 'brightness(1.1)', opacity: '1' },
+        },
+        // If you want to keep any of your original animations like fall-normal, twinkle, etc., leave them here.
+        // Otherwise, remove them if not needed.
         'fall-normal': {
           '0%': { 
             transform: 'translateY(-10%) translateX(-10%)', 
@@ -92,29 +103,18 @@ module.exports = {
             opacity: 0 
           }
         },
-        // Star twinkling animation
         'twinkle': {
-          '0%, 100%': { 
-            opacity: 0.3 
-          },
-          '50%': { 
-            opacity: 1 
-          }
+          '0%, 100%': { opacity: 0.3 },
+          '50%': { opacity: 1 }
         },
-        // Float animation for UI elements
         'float': {
-          '0%': { 
-            transform: 'translateY(0px)' 
-          },
-          '50%': { 
-            transform: 'translateY(-10px)' 
-          },
-          '100%': { 
-            transform: 'translateY(0px)' 
-          }
+          '0%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-10px)' },
+          '100%': { transform: 'translateY(0px)' }
         }
       },
       animation: {
+        candleFlicker: 'candleFlicker 2s infinite ease-in-out',
         'fall-normal': 'fall-normal 10s linear infinite',
         'fall-slow': 'fall-slow 15s linear infinite',
         'fall-slower': 'fall-slower 20s linear infinite',

@@ -1,34 +1,39 @@
+// /client/src/pages/DashboardPage.tsx
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useNotification } from '../context/NotificationContext';
-import { Search, PlusCircle, Scroll, LogOut } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { User } from 'lucide-react';
+import { Search, PlusCircle, Scroll, User } from 'lucide-react';
 import { api } from '../services/api';
+
+import { TavernInterior } from '../components/theme/TavernInterior';
+import { NPCDialog } from '../components/theme/NPCDialog';
+import placeholderFace from '@/assets/placeholder-face.webp';
 
 interface Campaign {
   _id: string;
   cid: number;
   title: string;
   description: string;
-  content?: string; // Optional because it's only visible to logged-in users
   user: {
     _id: string;
     username: string;
   };
-  upvotes: string[];
   createdAt: string;
+  upvotes: string[];
+  upvoteCount?: number;
+  isUpvoted?: boolean;
 }
 
 export const DashboardPage = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const { showNotification } = useNotification();
+
   const [searchQuery, setSearchQuery] = useState('');
-  const [campaigns, setCampaigns] = useState<Campaign[]>([]); // This will be populated from your API
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -46,17 +51,16 @@ export const DashboardPage = () => {
     };
 
     loadCampaigns();
-  }, []);
+  }, [showNotification]);
 
   const handleLogout = () => {
     logout();
-    showNotification('🚪 Farewell, brave adventurer!', 'success');
+    showNotification('🚪 Farewell, adventurer!', 'success');
     navigate('/login');
   };
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    // Implement campaign search logic here
   };
 
   const handleCreateCampaign = () => {
@@ -64,107 +68,97 @@ export const DashboardPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#2c1810] p-4 sm:p-6 lg:p-8">
-      {/* Navigation */}
-      <nav className="bg-[#deb887] border-4 border-[#8B4513] rounded-lg shadow-[8px_8px_0_#000] mb-8">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-4">
-              <Scroll className="h-8 w-8 text-[#8B4513]" />
-              <h1 className="text-2xl font-bold font-serif text-[#8B4513]">The Adventurer's Tavern</h1>
+    <TavernInterior>
+      <div className="max-w-3xl mx-auto mt-8 mb-12">
+        <NPCDialog speaker="Jorje the Tavernkeeper" icon={placeholderFace}>
+          "Welcome, {user?.username || 'stranger'}! The bounty board awaits. Post your quests or claim those posted by others. The candlelight flickers, secrets whisper in the dark wood. Choose wisely!"
+        </NPCDialog>
+      </div>
+
+      <div className="max-w-7xl mx-auto space-y-8">
+        <div className="bg-[#f4e4bc] border-4 border-[#8B4513] rounded-lg p-6">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-3.5 h-5 w-5 text-[#8B4513]" />
+              <Input
+                placeholder="Search the bounty board..."
+                value={searchQuery}
+                onChange={(e) => handleSearch(e.target.value)}
+                className="pl-10 bg-[#fff8dc] border-2 border-[#8B4513] 
+                           text-[#2c1810] placeholder-[#8B4513]/60 
+                           focus:ring-2 focus:ring-[#8B4513] h-12 text-lg rounded-lg"
+              />
             </div>
-              <div className="flex items-center space-x-4">
-                {user && (
-                  <>
-                    <Link 
-                      to={`/profile/${user.username}`}
-                      className="flex items-center gap-2 text-[#8B4513] hover:text-[#6b3410] font-serif transition-colors"
-                    >
-                      <User className="h-5 w-5" />
-                      <span>Welcome, {user.username}! 🍺</span>
-                    </Link>
-                    <Button
-                      onClick={handleLogout}
-                      variant="outline"
-                      className="bg-[#8B4513] text-[#f4e4bc] hover:bg-[#6b3410] font-bold px-4 py-2 rounded shadow-[4px_4px_0_#000] border-2 border-[#f4e4bc] flex items-center gap-2"
-                    >
-                      Leave Tavern
-                    </Button>
-                  </>
-                )}
-              </div>
+            {user && (
+              <Button
+                onClick={handleCreateCampaign}
+                className="bg-[#2c1810] text-[#f4e4bc] hover:bg-[#1a0f09] font-bold
+                           px-6 h-12 rounded-lg border-2 border-[#f4e4bc] flex items-center gap-2"
+              >
+                <PlusCircle className="h-5 w-5" />
+                Post a New Bounty
+              </Button>
+            )}
           </div>
         </div>
-      </nav>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto">
-        {/* Search and Create Section */}
-        <Card className="bg-[#deb887] border-4 border-[#8B4513] shadow-[8px_8px_0_#000] mb-8">
-          <CardContent className="p-6">
-            <div className="flex gap-4 flex-col sm:flex-row">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-3 h-5 w-5 text-[#8B4513]" />
-                <Input
-                  placeholder="Search for legendary tales..."
-                  value={searchQuery}
-                  onChange={(e) => handleSearch(e.target.value)}
-                  className="pl-10 bg-[#f4e4bc] border-2 border-[#8B4513] text-[#2c1810] placeholder-[#8B4513]/60 focus:ring-2 focus:ring-[#8B4513] h-12 text-lg rounded-lg"
-                />
-              </div>
-              {user && (
-                <Button
-                  onClick={handleCreateCampaign}
-                  className="bg-[#2c1810] text-[#f4e4bc] hover:bg-[#1a0f09] font-bold px-6 h-12 rounded-lg shadow-[4px_4px_0_#000] border-2 border-[#f4e4bc] flex items-center gap-2 whitespace-nowrap"
-                >
-                  <PlusCircle className="h-5 w-5" />
-                  Inscribe New Tale
-                </Button>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+        {isLoading ? (
+          <div className="text-center py-12">
+            <p className="text-[#f4e4bc] text-lg">Consulting ancient scrolls... 📚</p>
+          </div>
+        ) : campaigns.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-[#f4e4bc] text-lg">
+              The board is empty... Post the first quest!
+            </p>
+          </div>
+        ) : (
+          <div className="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {campaigns.map((campaign) => (
+              <div
+                key={campaign._id}
+                onClick={() => navigate(`/campaigns/${campaign.cid}`)}
+                className="relative bg-parchment border-2 border-[#8B4513] p-4 cursor-pointer 
+                           transform rotate-[-2deg] hover:rotate-0 hover:translate-x-[2px] hover:translate-y-[2px] transition-transform rounded-lg"
+              >
+                {/* Pin image */}
+                <img src="/pin.png" alt="pin" className="w-5 h-5 absolute top-[-10px] left-1/2 transform -translate-x-1/2" />
 
-        {/* Campaigns Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {campaigns.map((campaign) => (
-            <Card 
-              key={campaign._id} 
-              className="bg-[#f4e4bc] border-4 border-[#8B4513] shadow-[8px_8px_0_#000] hover:translate-x-1 hover:translate-y-1 hover:shadow-[4px_4px_0_#000] transition-all"
-            >
-              <CardHeader className="border-b-4 border-[#8B4513] bg-[#deb887]">
-                <CardTitle className="text-xl font-serif text-[#8B4513]">
+                <h2 className="text-[#2c1810] text-xl font-bold mb-2 flex items-center gap-2">
+                  <Scroll className="h-5 w-5 text-[#2c1810]" />
                   {campaign.title}
-                </CardTitle>
-                <p className="text-sm text-[#8B4513]/80 font-serif">by {campaign.author}</p>
-              </CardHeader>
-              <CardContent className="p-6">
-                <p className="text-[#2c1810] mb-4 font-medium">{campaign.description}</p>
-                <div className="flex justify-between items-center text-sm text-[#8B4513]">
-                  <span className="flex items-center gap-1">
-                    🎲 {campaign.upvotes} adventurers approve
-                  </span>
-                  <span className="font-serif">
-                    {new Date(campaign.createdAt).toLocaleDateString()}
-                  </span>
+                </h2>
+                <p className="text-[#2c1810] mb-4">{campaign.description}</p>
+                <div className="flex justify-between text-sm text-[#2c1810]">
+                  <span>🎲 {campaign.upvoteCount ?? campaign.upvotes.length} nod</span>
+                  <span>{new Date(campaign.createdAt).toLocaleDateString()}</span>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* Empty State */}
-        {(isLoading ? (
-          <div className="text-center py-12">
-            <p className="text-[#8B4513] text-lg font-serif">Loading tales from the archives... 📚</p>
-          </div>
-        ) : campaigns.length === 0) && (
-          <div className="text-center py-12">
-            <p className="text-[#8B4513] text-lg font-serif">The tavern is quiet... No tales have been shared yet. 🍺</p>
+              </div>
+            ))}
           </div>
         )}
-      </main>
-    </div>
+
+        {user && (
+          <div className="flex justify-end gap-4 mt-8">
+            <Button
+              onClick={() => navigate(`/profile/${user.username}`)}
+              className="bg-[#8B4513] text-[#f4e4bc] hover:bg-[#6b3410] font-bold px-4 py-2 rounded 
+                         border-2 border-[#f4e4bc] flex items-center gap-2"
+            >
+              <User className="h-4 w-4" />
+              Your Profile
+            </Button>
+            <Button
+              onClick={handleLogout}
+              className="bg-[#a65d37] text-[#f4e4bc] hover:bg-[#8B4513] font-bold px-4 py-2 
+                         rounded border-2 border-[#f4e4bc]"
+            >
+              Leave Tavern
+            </Button>
+          </div>
+        )}
+      </div>
+    </TavernInterior>
   );
 };
 

@@ -3,11 +3,11 @@ import { useAuth } from '../context/AuthContext';
 import { RegisterForm } from '../components/RegisterForm';
 import { 
   TavernSign, 
-  NPCDialog, 
   CabinDoor,
   CabinStructure, 
   ForestBackground 
 } from '../components/theme/CabinExterior';
+import { NPCDialog } from '../components/theme/NPCDialog';
 import { Snowfall } from '../components/theme/SnowEffects';
 
 export const RegisterPage = () => {
