@@ -15,7 +15,7 @@ export interface Post {
   user: User;
   title: string;
   description: string;
-  setup: string;
+  content: string;
   upvoteBy: User[];
   isHidden: boolean;
   createdAt: number;

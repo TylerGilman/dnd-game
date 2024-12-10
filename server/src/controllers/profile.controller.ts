@@ -38,7 +38,7 @@ export const profileController = {
                 isAdmin: user.isAdmin,
                 email: loggedInUserId ? user.email : undefined,
                 tagline: user.tagline,
-                numberOfFollowers: user.following.length,
+                numberOfFollowers: await User.countDocuments({ following: user._id }),
                 is_following,
                 is_follower,
                 campaigns: campaigns.map((campaign) => ({

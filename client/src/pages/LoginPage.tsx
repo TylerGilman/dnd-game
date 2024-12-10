@@ -12,8 +12,8 @@ import { ScrollButton } from '../components/theme/ThemeComponents';
 import { Snowfall } from '../components/theme/SnowEffects';
 import {
   CabinDoor,
-  CabinStructure, 
-  ForestBackground 
+  CabinStructure,
+  ForestBackground
 } from '../components/theme/CabinExterior';
 import { NPCDialog } from '../components/theme/NPCDialog';
 // Login form with glowing effects
@@ -70,7 +70,7 @@ const LoginForm = () => {
     <form onSubmit={handleSubmit} className="space-y-6 relative">
       {/* Warm glow effect behind the form */}
       <div className="absolute inset-0 bg-yellow-900/20 blur-xl rounded-lg" />
-      
+
       <div className="relative">
         <label className="block text-lg font-serif font-bold text-[#f4e4bc] mb-2 text-shadow-fire">
           Magical Contact Scroll
@@ -143,8 +143,8 @@ export const LoginPage = () => {
           <NPCDialog>
             *A warm, friendly voice calls through the door*
             <br /><br />
-            "Ah, is that a familiar face I see through this winter storm? 
-            Come now, remind an old friend of your credentials, and we'll have you 
+            "Ah, is that a familiar face I see through this winter storm?
+            Come now, remind an old friend of your credentials, and we'll have you
             by the fire with a warm mead in no time!"
           </NPCDialog>
 
@@ -152,13 +152,20 @@ export const LoginPage = () => {
             <CabinDoor>
               <LoginForm />
             </CabinDoor>
+
+              <Link
+              to="/dashboard"
+              className="flex justify-center pt-4 text-sm font-serif font-bold text-[#f4e4bc] underline underline-offset-4 hover:text-[#8B4513] transition-colors duration-300"
+                >
+              enter the tavern anonymously
+            </Link>
           </CabinStructure>
 
           <p className="text-center text-[#DEB887] font-serif mt-4 text-lg">
             New to these parts?{' '}
-            <Link 
+            <Link
               to="/register"
-              className="font-bold text-[#2c1810] underline underline-offset-4 hover:text-[#8B4513] transition-colors duration-300"
+              className="font-bold text-[#DEB887] underline underline-offset-4 hover:text-[#8B4513] transition-colors duration-300"
             >
               *Join our merry band of adventurers*
             </Link>
