@@ -214,7 +214,7 @@ export const ForestBackground = ({ children }: { children: React.ReactNode }) =>
         />
       ))}
     </div>
-    <div className="fixed bottom-0 left-0 right-0 h-48 bg-white" />
+    {/*<div className="fixed bottom-0 left-0 right-0 h-48 bg-white" />*/}
     <div className="fixed inset-0 pointer-events-none overflow-hidden">
       {[...Array(30)].map((_, i) => (
         <div

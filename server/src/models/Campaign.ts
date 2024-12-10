@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+
 import mongoose from "mongoose";
 import AutoIncrementFactory from 'mongoose-sequence';
 

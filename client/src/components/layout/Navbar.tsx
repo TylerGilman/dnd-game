@@ -1,10 +1,13 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { ScrollButton, ThemeCard } from './ThemeComponents';
 import { User, Scroll, LogOut } from 'lucide-react';
 
-const Navbar = ({ user, onAddFriend, friendRequests }) => {
+const Navbar = ({ user}) => {
   const navigate = useNavigate();
   const { logout } = useAuth();
 

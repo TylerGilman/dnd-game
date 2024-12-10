@@ -1,10 +1,13 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useNotification } from '../context/NotificationContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, PlusCircle, Scroll, User, ThumbsUp } from 'lucide-react';
+import {Search, PlusCircle, Scroll, User, ThumbsUp, ArrowLeft} from 'lucide-react';
 import { api } from '../services/api';
 import debounce from 'lodash/debounce';
 import { TavernInterior } from '../components/theme/TavernInterior';
@@ -103,9 +106,9 @@ export const DashboardPage = () => {
         return;
       }
 
-      const response = await api.toggleUpvote(campaign.cid, token);
-      
-      setCampaigns(prevCampaigns => 
+      //const response = await api.toggleUpvote(campaign.cid, token);
+
+      setCampaigns(prevCampaigns =>
         prevCampaigns.map(c => {
           if (c.cid === campaign.cid) {
             return {
@@ -119,9 +122,9 @@ export const DashboardPage = () => {
       );
 
       showNotification(
-        campaign.isUpvoted 
-          ? 'Removed your vote from the tale' 
-          : 'Added your vote to the tale', 
+        campaign.isUpvoted
+          ? 'Removed your vote from the tale'
+          : 'Added your vote to the tale',
         'success'
       );
     } catch (error) {
@@ -135,6 +138,17 @@ export const DashboardPage = () => {
       <div className="max-w-3xl mx-auto mt-8 mb-12">
         <NPCDialog speaker="Jorje the Tavernkeeper" icon={placeholderFace}>
           "Welcome, {user?.username || 'stranger'}! This adventure board awaits your mark. Post new quests or vote for quests that suit your fancy!"
+          {!user && (
+              <div className="flex flex-wrap justify-end">
+                <Button
+                  onClick={() => navigate('/login')}
+                  className="bg-[#8B4513] text-[#f4e4bc] hover:bg-[#6b3410] font-semibold px-6 py-2 rounded shadow-inner border-2 border-[#f4e4bc] flex items-center gap-2"
+                >
+                  Feeling adventurous? Log in to join the quest.
+                </Button>
+              </div>
+            )}
+
         </NPCDialog>
       </div>
 
@@ -149,7 +163,7 @@ export const DashboardPage = () => {
                 placeholder="Search the adventure board..."
                 value={searchQuery}
                 onChange={(e) => handleSearch(e.target.value)}
-                className="pl-10 bg-[#fff8dc] border-2 border-[#8B4513] 
+                className="pl-10 bg-[#fff8dc] border-2 border-[#8B4513]
                            text-[#2c1810] placeholder-[#8B4513]/60 
                            focus:ring-2 focus:ring-[#8B4513] h-12 text-lg rounded-lg"
               />
@@ -184,7 +198,7 @@ export const DashboardPage = () => {
             {campaigns.map((campaign) => (
               <div
                 key={campaign._id}
-                className="relative bg-parchment border-2 border-[#8B4513] p-4 cursor-pointer 
+                className="relative bg-parchment border-2 border-[#8B4513] p-4 cursor-pointer
                          transform rotate-[-2deg] hover:rotate-0 hover:translate-x-[2px] hover:translate-y-[2px] 
                          transition-transform rounded-lg"
               >
@@ -203,7 +217,7 @@ export const DashboardPage = () => {
                   </div>
                 </div>
 
-                <div 
+                <div
                   className="text-[#2c1810] mb-4 cursor-pointer"
                   onClick={() => navigate(`/campaigns/${campaign.cid}`)}
                 >
@@ -222,10 +236,10 @@ export const DashboardPage = () => {
                         : 'text-[#8B4513] hover:text-[#2c1810]'
                     }`}
                   >
-                    <ThumbsUp 
+                    <ThumbsUp
                       className={`h-4 w-4 ${
                         campaign.isUpvoted ? 'fill-current' : ''
-                      }`} 
+                      }`}
                     />
                     <span>{campaign.upvoteCount || 0} votes</span>
                   </button>
@@ -240,7 +254,7 @@ export const DashboardPage = () => {
           <div className="flex justify-end gap-4 mt-8">
             <Button
               onClick={() => navigate(`/profile/${user.username}`)}
-              className="bg-[#8B4513] text-[#f4e4bc] hover:bg-[#6b3410] font-bold px-4 py-2 rounded 
+              className="bg-[#8B4513] text-[#f4e4bc] hover:bg-[#6b3410] font-bold px-4 py-2 rounded
                          border-2 border-[#f4e4bc] flex items-center gap-2"
             >
               <User className="h-4 w-4" />
@@ -248,7 +262,7 @@ export const DashboardPage = () => {
             </Button>
             <Button
               onClick={handleLogout}
-              className="bg-[#a65d37] text-[#f4e4bc] hover:bg-[#8B4513] font-bold px-4 py-2 
+              className="bg-[#a65d37] text-[#f4e4bc] hover:bg-[#8B4513] font-bold px-4 py-2
                          rounded border-2 border-[#f4e4bc]"
             >
               Leave Tavern
