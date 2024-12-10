@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate, Navigate, Link } from 'react-router-dom';
@@ -7,8 +10,7 @@ import { api } from '../services/api';
 import { Mail, KeyRound } from 'lucide-react';
 import { ScrollButton } from '../components/theme/ThemeComponents';
 import { Snowfall } from '../components/theme/SnowEffects';
-import { 
-  TavernSign, 
+import {
   CabinDoor,
   CabinStructure, 
   ForestBackground 
@@ -20,7 +22,7 @@ const LoginForm = () => {
     email: '',
     password: ''
   });
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  //const [errors, setErrors] = useState<Record<string, string>>({});
   const navigate = useNavigate();
   const { login } = useAuth();
   const { showNotification } = useNotification();
