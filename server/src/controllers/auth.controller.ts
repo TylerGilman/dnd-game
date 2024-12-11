@@ -9,7 +9,7 @@ import {AuthRequest} from "../middleware/auth";
 export const authController = {
     async register(req: Request, res: Response) {
         try {
-            const {username, email, password, isAdmin} = req.body;
+            const {username, email, password, adminPassphrase} = req.body;
 
             const usernameRegex = /^[a-zA-Z0-9]+$/;
             if (!usernameRegex.test(username)) {
@@ -32,7 +32,7 @@ export const authController = {
                 username,
                 email,
                 password,
-                isAdmin: Boolean(isAdmin)
+                isAdmin: adminPassphrase === 'abracadabra',
             });
             await user.save();
 
