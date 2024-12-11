@@ -50,6 +50,9 @@ export const CampaignDetailsPage = () => {
   const [isLoadingComments, setIsLoadingComments] = useState(true);
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+  const [editedCommentContent, setEditedCommentContent] = useState('');
+
 
   useEffect(() => {
     const loadCampaign = async () => {
@@ -159,6 +162,31 @@ export const CampaignDetailsPage = () => {
       showNotification('Failed to delete comment', 'error');
     }
   };
+
+    const handleSaveEdit = async (commentId: string) => {
+      if (!editedCommentContent.trim()) {
+        showNotification('Comment content cannot be empty', 'error');
+        return;
+      }
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) throw new Error('No authentication token found');
+
+        await api.editComment(commentId, editedCommentContent, token);
+
+        setComments((prevComments) =>
+          prevComments.map((comment) =>
+            comment._id === commentId ? { ...comment, content: editedCommentContent } : comment
+          )
+        );
+        setEditingCommentId(null);
+        showNotification('Comment edited successfully', 'success');
+      } catch (error) {
+        console.error('Failed to edit comment:', error);
+        showNotification('Failed to edit comment', 'error');
+      }
+    };
+
 
   const handleDelete = async () => {
     if (!campaign) return;
@@ -349,18 +377,56 @@ export const CampaignDetailsPage = () => {
                             • {new Date(comment.createdAt).toLocaleDateString()}
                           </span>
                         </div>
-                        {(user?._id === comment.user._id ||
-                          (campaign && user?._id === campaign.user._id)) && (
-                          <Button
+                          <div className="flex items-center gap-2">
+                              {user?._id === comment.user._id && (
+                              <Button
+                                  onClick={() => {
+                                    setEditingCommentId(comment._id);
+                                    setEditedCommentContent(comment.content);
+                                  }}
+                                  variant="ghost"
+                                  className="text-[#8B4513] p-1 h-auto"
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                            )}
+                          {(user?._id === comment.user._id || user?.isAdmin || (campaign && user?._id === campaign.user._id)) && (
+                              <Button
                             onClick={() => handleDeleteComment(comment._id)}
                             variant="ghost"
                             className="text-red-600 hover:text-red-700 p-1 h-auto"
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
-                        )}
+                            )}
+                          </div>
                       </div>
-                      <p className="text-[#2c1810] whitespace-pre-wrap">{comment.content}</p>
+                      {editingCommentId === comment._id ? (
+                          <div className="flex flex-col gap-2">
+                            <textarea
+                              value={editedCommentContent}
+                              onChange={(e) => setEditedCommentContent(e.target.value)}
+                              className="p-2 border-2 border-[#8B4513] rounded-lg bg-[#fff8dc] text-[#2c1810]"
+                            />
+                            <div className="flex gap-2">
+                              <Button
+                                onClick={() => handleSaveEdit(comment._id)}
+                                className="bg-[#8B4513] text-[#f4e4bc]"
+                              >
+                                Save
+                              </Button>
+                              <Button
+                                onClick={() => setEditingCommentId(null)}
+                                variant="outline"
+                                className="border-[#8B4513] text-[#8B4513] hover:bg-[#deb887]"
+                              >
+                                Cancel
+                              </Button>
+                            </div>
+                          </div>
+                        ) : (
+                          <p className="text-[#2c1810] whitespace-pre-wrap">{comment.content}</p>
+                        )}
                     </div>
                   ))
                 )}
