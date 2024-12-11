@@ -42,7 +42,7 @@ export const CampaignDetailsPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { showNotification } = useNotification();
-  
+
   const [campaign, setCampaign] = useState<Campaign | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
@@ -50,6 +50,9 @@ export const CampaignDetailsPage = () => {
   const [isLoadingComments, setIsLoadingComments] = useState(true);
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+  const [editedCommentContent, setEditedCommentContent] = useState('');
+
 
   useEffect(() => {
     const loadCampaign = async () => {
@@ -98,8 +101,8 @@ export const CampaignDetailsPage = () => {
         return;
       }
 
-      //const response = await api.toggleUpvote(campaign.cid, token);
-      
+      await api.toggleUpvote(campaign.cid, token);
+
       setCampaign(prev => {
         if (!prev) return null;
         return {
@@ -110,9 +113,9 @@ export const CampaignDetailsPage = () => {
       });
 
       showNotification(
-        campaign.isUpvoted 
-          ? 'Removed your vote from the tale' 
-          : 'Added your vote to the tale', 
+        campaign.isUpvoted
+          ? 'Removed your vote from the tale'
+          : 'Added your vote to the tale',
         'success'
       );
     } catch (error) {
@@ -159,6 +162,31 @@ export const CampaignDetailsPage = () => {
       showNotification('Failed to delete comment', 'error');
     }
   };
+
+    const handleSaveEdit = async (commentId: string) => {
+      if (!editedCommentContent.trim()) {
+        showNotification('Comment content cannot be empty', 'error');
+        return;
+      }
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) throw new Error('No authentication token found');
+
+        await api.editComment(commentId, editedCommentContent, token);
+
+        setComments((prevComments) =>
+          prevComments.map((comment) =>
+            comment._id === commentId ? { ...comment, content: editedCommentContent } : comment
+          )
+        );
+        setEditingCommentId(null);
+        showNotification('Comment edited successfully', 'success');
+      } catch (error) {
+        console.error('Failed to edit comment:', error);
+        showNotification('Failed to edit comment', 'error');
+      }
+    };
+
 
   const handleDelete = async () => {
     if (!campaign) return;
@@ -209,7 +237,7 @@ export const CampaignDetailsPage = () => {
       <div className="max-w-4xl mx-auto p-6">
         {/* Navigation Bar */}
         <div className="mb-8 flex justify-between items-center bg-[#f4e4bc] p-4 rounded-lg border-4 border-[#8B4513] shadow-lg">
-          <Button 
+          <Button
             onClick={() => navigate('/dashboard')}
             className="bg-[#8B4513] text-[#f4e4bc] hover:bg-[#6b3410] font-semibold px-6 py-2 rounded shadow-inner border-2 border-[#f4e4bc] flex items-center gap-2"
           >
@@ -224,26 +252,32 @@ export const CampaignDetailsPage = () => {
           <div className="border-b-4 border-[#8B4513] bg-[#deb887] p-6">
             <div className="flex justify-between items-start">
               <h1 className="text-3xl font-bold text-[#2c1810] font-serif mb-4">{campaign.title}</h1>
-              
-              {user && campaign.user._id === user._id && (
-                <div className="flex gap-2">
-                  <Button
-                    onClick={() => navigate(`/campaigns/edit/${campaign.cid}`)}
-                    className="bg-[#8B4513] text-[#f4e4bc]"
-                  >
-                    <Edit className="h-4 w-4 mr-2" />
-                    Edit
-                  </Button>
-                  <Button
-                    onClick={() => setShowDeleteDialog(true)}
-                    variant="destructive"
-                    className="bg-red-800"
-                  >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Delete
-                  </Button>
-                </div>
-              )}
+
+              {user && (
+  <div className="flex gap-2">
+        {campaign.user._id === user._id && (
+          <Button
+            onClick={() => navigate(`/campaigns/edit/${campaign.cid}`)}
+            className="bg-[#8B4513] text-[#f4e4bc]"
+          >
+            <Edit className="h-4 w-4 mr-2" />
+            Edit
+          </Button>
+        )}
+
+        {(campaign.user._id === user._id || user.isAdmin) && (
+          <Button
+            onClick={() => setShowDeleteDialog(true)}
+            variant="destructive"
+            className="bg-red-800"
+          >
+            <Trash2 className="h-4 w-4 mr-2" />
+            Delete
+          </Button>
+        )}
+      </div>
+    )}
+
             </div>
 
             <div className="flex items-center justify-between text-[#2c1810]">
@@ -294,7 +328,7 @@ export const CampaignDetailsPage = () => {
                 <MessageSquare className="h-6 w-6 text-[#2c1810]" />
                 <h2 className="text-xl font-bold text-[#2c1810] font-serif">Tavern Chat</h2>
               </div>
-              
+
               {/* Comment Form */}
               {user && (
                 <form onSubmit={handleSubmitComment} className="mb-6">
@@ -303,14 +337,14 @@ export const CampaignDetailsPage = () => {
                       value={newComment}
                       onChange={(e) => setNewComment(e.target.value)}
                       placeholder="Share your thoughts on this tale..."
-                      className="flex-grow p-3 rounded-lg border-2 border-[#8B4513] bg-[#fff8dc] 
+                      className="flex-grow p-3 rounded-lg border-2 border-[#8B4513] bg-[#fff8dc]
                                text-[#2c1810] placeholder-[#8B4513]/60 
                                focus:ring-2 focus:ring-[#8B4513] min-h-[100px]"
                     />
                     <Button
                       type="submit"
                       disabled={isSubmittingComment || !newComment.trim()}
-                      className="self-end bg-[#8B4513] text-[#f4e4bc] hover:bg-[#654321] 
+                      className="self-end bg-[#8B4513] text-[#f4e4bc] hover:bg-[#654321]
                                disabled:opacity-50"
                     >
                       {isSubmittingComment ? 'Posting...' : 'Post Comment'}
@@ -329,8 +363,8 @@ export const CampaignDetailsPage = () => {
                   </p>
                 ) : (
                   comments.map((comment) => (
-                    <div 
-                      key={comment._id} 
+                    <div
+                      key={comment._id}
                       className="bg-[#fff8dc] p-4 rounded-lg border-2 border-[#8B4513] relative"
                     >
                       <div className="flex justify-between items-start mb-2">
@@ -343,18 +377,56 @@ export const CampaignDetailsPage = () => {
                             • {new Date(comment.createdAt).toLocaleDateString()}
                           </span>
                         </div>
-                        {(user?._id === comment.user._id || 
-                          (campaign && user?._id === campaign.user._id)) && (
-                          <Button
+                          <div className="flex items-center gap-2">
+                              {user?._id === comment.user._id && (
+                              <Button
+                                  onClick={() => {
+                                    setEditingCommentId(comment._id);
+                                    setEditedCommentContent(comment.content);
+                                  }}
+                                  variant="ghost"
+                                  className="text-[#8B4513] p-1 h-auto"
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                            )}
+                          {(user?._id === comment.user._id || user?.isAdmin || (campaign && user?._id === campaign.user._id)) && (
+                              <Button
                             onClick={() => handleDeleteComment(comment._id)}
                             variant="ghost"
                             className="text-red-600 hover:text-red-700 p-1 h-auto"
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
-                        )}
+                            )}
+                          </div>
                       </div>
-                      <p className="text-[#2c1810] whitespace-pre-wrap">{comment.content}</p>
+                      {editingCommentId === comment._id ? (
+                          <div className="flex flex-col gap-2">
+                            <textarea
+                              value={editedCommentContent}
+                              onChange={(e) => setEditedCommentContent(e.target.value)}
+                              className="p-2 border-2 border-[#8B4513] rounded-lg bg-[#fff8dc] text-[#2c1810]"
+                            />
+                            <div className="flex gap-2">
+                              <Button
+                                onClick={() => handleSaveEdit(comment._id)}
+                                className="bg-[#8B4513] text-[#f4e4bc]"
+                              >
+                                Save
+                              </Button>
+                              <Button
+                                onClick={() => setEditingCommentId(null)}
+                                variant="outline"
+                                className="border-[#8B4513] text-[#8B4513] hover:bg-[#deb887]"
+                              >
+                                Cancel
+                              </Button>
+                            </div>
+                          </div>
+                        ) : (
+                          <p className="text-[#2c1810] whitespace-pre-wrap">{comment.content}</p>
+                        )}
                     </div>
                   ))
                 )}

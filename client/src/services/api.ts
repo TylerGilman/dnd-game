@@ -238,6 +238,26 @@ export const api = {
 
         return response.json();
     },
+
+    async editComment(commentId: string, newContent: string, token: string) {
+        const response = await fetch(`${API_URL}/api/comments/update`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({_id: commentId, content: newContent})
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Failed to delete comment');
+        }
+
+        return response.json();
+    },
+
     async toggleUpvote(cid: number, token: string) {
         const response = await fetch(`${API_URL}/api/campaigns/${cid}/upvote`, {
             method: 'POST',
