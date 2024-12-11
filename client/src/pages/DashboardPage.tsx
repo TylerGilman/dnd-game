@@ -106,7 +106,7 @@ export const DashboardPage = () => {
         return;
       }
 
-      //const response = await api.toggleUpvote(campaign.cid, token);
+      await api.toggleUpvote(campaign.cid, token);
 
       setCampaigns(prevCampaigns =>
         prevCampaigns.map(c => {

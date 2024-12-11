@@ -101,7 +101,7 @@ export const CampaignDetailsPage = () => {
         return;
       }
 
-      //const response = await api.toggleUpvote(campaign.cid, token);
+      await api.toggleUpvote(campaign.cid, token);
 
       setCampaign(prev => {
         if (!prev) return null;
