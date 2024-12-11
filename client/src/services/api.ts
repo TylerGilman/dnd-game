@@ -48,6 +48,23 @@ export const api = {
         return response.json();
     },
 
+    async get_followers(username: string, token: string) {
+        const response = await fetch(`${API_URL}/api/profiles/${username}/followers`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+                'Accept': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Failed to fetch followers');
+        }
+
+        return response.json();
+    },
 
     async login(email: string, password: string) {
         await simulateDelay(); // Add delay
