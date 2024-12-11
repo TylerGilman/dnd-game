@@ -99,30 +99,50 @@ export const ProfilePage = () => {
     <div className="min-h-screen bg-[#2c1810] p-8">
   <div className="max-w-4xl mx-auto">
       {/* Navigation */}
-    <div className="mb-8 flex justify-between items-center bg-[#f4e4bc] p-4 rounded-lg border-4 border-[#8B4513] shadow-lg">
-      <Button 
-        onClick={() => navigate('/dashboard')}
-        className="bg-[#8B4513] text-[#f4e4bc] hover:bg-[#6b3410] font-semibold px-6 py-2 rounded shadow-inner border-2 border-[#f4e4bc]"
+    <div
+        className="mb-8 flex justify-between items-center bg-[#f4e4bc] p-4 rounded-lg border-4 border-[#8B4513] shadow-lg">
+      <Button
+          onClick={() => navigate('/dashboard')}
+          className="bg-[#8B4513] text-[#f4e4bc] hover:bg-[#6b3410] font-semibold px-6 py-2 rounded shadow-inner border-2 border-[#f4e4bc]"
       >
         ← Back to Tavern
       </Button>
-      <h2 className="text-[#8B4513] font-serif text-xl">
-        {isLoading ? 'Loading...' : profile?.username + "'s Profile"}
-      </h2>
+      <div className="text-[#8B4513] font-serif text-xl flex items-center justify-between">
+        {isLoading ? (
+            'Loading...'
+        ) : (
+            <>
+              <h2>
+                {profile?.username === user?.username
+                    ? 'My Profile'
+                    : `${profile?.username}'s Profile`}
+              </h2>
+              {profile?.username === user?.username && (
+                  <button
+                      onClick={() => navigate(`/profile/update`)}
+                      className="ml-4 text-sm bg-[#8B4513] text-[#f4e4bc] hover:bg-[#6b3410] font-semibold px-6 py-2 rounded shadow-inner border-2 border-[#f4e4bc]"
+                  >
+                    Edit Profile
+                  </button>
+              )}
+            </>
+        )}
+      </div>
+
     </div>
-      <div className="max-w-4xl mx-auto">
-        {/* Profile Card */}
-        <Card className="bg-[#f4e4bc] border-4 border-[#8B4513] shadow-[8px_8px_0_#000] mb-8">
-          <CardHeader className="border-b-4 border-[#8B4513] bg-[#deb887]">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <User className="h-12 w-12 text-[#8B4513]" />
-                <div>
-                  <CardTitle className="text-2xl font-serif text-[#8B4513]">
-                    {profile.username}
-                    {profile.isAdmin && ' 👑'}
-                  </CardTitle>
-                  <p className="text-[#8B4513]/80 font-serif">{profile.tagline || 'A mysterious adventurer...'}</p>
+    <div className="max-w-4xl mx-auto">
+      {/* Profile Card */}
+      <Card className="bg-[#f4e4bc] border-4 border-[#8B4513] shadow-[8px_8px_0_#000] mb-8">
+        <CardHeader className="border-b-4 border-[#8B4513] bg-[#deb887]">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <User className="h-12 w-12 text-[#8B4513]"/>
+              <div>
+                <CardTitle className="text-2xl font-serif text-[#8B4513]">
+                  {profile.username}
+                  {profile.isAdmin && ' 👑'}
+                </CardTitle>
+                <p className="text-[#8B4513]/80 font-serif">{profile.tagline || 'A mysterious adventurer...'}</p>
                 </div>
               </div>
               {user?.username !== profile.username && (

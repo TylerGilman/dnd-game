@@ -11,6 +11,7 @@ import { CreateCampaignPage } from './pages/CreateCampaignPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { EditCampaignPage } from './pages/EditCampaignPage';
 import { CampaignDetailsPage } from './pages/CampaignDetailsPage';
+import EditProfilePage from "./pages/EditProfilePage.tsx";
 const queryClient = new QueryClient();
 
 function App() {
@@ -52,6 +53,7 @@ function App() {
               />
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
               <Route path="/profile/:username" element={<ProfilePage />} />
+                <Route path="/profile/update" element={<EditProfilePage />} />
             </Routes>
             <Notifications />
           </BrowserRouter>
