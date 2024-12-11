@@ -98,7 +98,7 @@ export const CampaignDetailsPage = () => {
         return;
       }
 
-      const response = await api.toggleUpvote(campaign.cid, token);
+      //const response = await api.toggleUpvote(campaign.cid, token);
       
       setCampaign(prev => {
         if (!prev) return null;
@@ -247,8 +247,13 @@ export const CampaignDetailsPage = () => {
             </div>
 
             <div className="flex items-center justify-between text-[#2c1810]">
-              <div className="flex items-center gap-2">
-                <User className="h-5 w-5" />
+              <div
+                  className="flex items-center gap-2 p-2 cursor-pointer hover:bg-[#f4e4bc] hover:text-[#8B4513] hover:shadow-md hover:rounded-lg transition-colors duration-200"
+                  onClick={() => {
+                    navigate(`/profile/${campaign.user.username}`);
+                  }}
+              >
+                <User className="h-5 w-5"/>
                 <span className="font-serif">By {campaign.user.username}</span>
               </div>
               <span className="text-sm">

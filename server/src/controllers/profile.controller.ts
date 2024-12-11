@@ -95,5 +95,40 @@ export const profileController = {
             console.error('Get Profile Followers error:', error);
             res.status(500).json({error: 'Internal server error.'});
         }
-    }
+    },
+
+    async updateProfile(req: AuthRequest, res: Response) {
+        try {
+            const {username} = req.params;
+            const {email, tagline, password} = req.body;
+            const loggedInUserId = req.user?.userId;
+            const isAdmin = req.user?.isAdmin;
+            if (!loggedInUserId) {
+                return res.status(401).json({error: 'must be logged in.'});
+            }
+            const targetUser = await User.findOne({username});
+            if (!targetUser) {
+                return res.status(404).json({error: 'User not found.'});
+            }
+            if (!isAdmin && !targetUser._id.equals(loggedInUserId)) {
+                return res.status(403).json({error: 'not authorized. either edit your own or if you are admin.'});
+            }
+            if (email) {
+                targetUser.email = email;
+            }
+            // we do allow empty strings as tagline
+            if (tagline !== undefined) {
+                targetUser.tagline = tagline;
+            }
+            if (password) {
+                targetUser.password = password;
+            }
+            await targetUser.save();
+
+            res.status(200).json({message: 'OK.', user: targetUser});
+        } catch (error) {
+            console.error('Update Profile error:', error);
+            res.status(500).json({error: 'Internal server error.'});
+        }
+    },
 };
