@@ -16,7 +16,8 @@ const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
     origin: config.clientUrl,
-    methods: ['GET', 'POST']
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: 'Content-Type,Authorization'
   }
 });
 
