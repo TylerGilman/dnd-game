@@ -21,7 +21,7 @@ export const NPCDialog = ({ speaker = "Unknown", icon, children }: NPCDialogProp
       
       <div className="flex items-start gap-3 mt-4">
         {icon && (
-          <div className="w-12 h-12 bg-[#deb887] border-2 border-[#8B4513] rounded-full overflow-hidden flex items-center justify-center">
+          <div className="w-32 h-32 bg-[#deb887] border-2 border-[#8B4513] rounded-full overflow-hidden flex items-center justify-center">
             <img src={icon} alt={`${speaker} face`} className="w-full h-full object-cover" />
           </div>
         )}
