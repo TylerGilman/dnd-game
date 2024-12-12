@@ -13,6 +13,7 @@ interface CampaignForm {
   title: string;
   description: string;
   content: string;
+  isHidden: boolean;
 }
 
 export const CreateCampaignPage = () => {
@@ -23,7 +24,8 @@ export const CreateCampaignPage = () => {
   const [form, setForm] = useState<CampaignForm>({
     title: '',
     description: '',
-    content: ''
+    content: '',
+    isHidden: false
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -105,69 +107,83 @@ const handleSubmit = async (e: React.FormEvent) => {
               </div>
 
               <div className="space-y-8">
-                <CampaignGenerator 
-                  onGenerated={(generatedFields) => {
-                    setForm(prev => ({
-                      ...prev,
-                      ...generatedFields
-                    }));
-                  }}
-                  currentFields={form}
+                <CampaignGenerator
+                    onGenerated={(generatedFields) => {
+                      setForm(prev => ({
+                        ...prev,
+                        ...generatedFields
+                      }));
+                    }}
+                    currentFields={form}
                 />
-              <div className="bg-[#deb887] p-6 rounded-lg border-2 border-[#8B4513]">
-                <label htmlFor="description" className="block text-lg font-serif font-bold text-[#8B4513] mb-2">
-                  📜 The Hook
-                </label>
-                <textarea
-                  id="description"
-                  name="description"
-                  value={form.description}
-                  onChange={handleChange}
-                  required
-                  rows={3}
-                  className="w-full bg-[#f4e4bc] border-2 border-[#8B4513] rounded-lg text-[#2c1810] placeholder-[#8B4513]/60 focus:ring-2 focus:ring-[#8B4513] p-3 text-lg"
-                  placeholder="Draw in fellow adventurers with a compelling introduction..."
-                />
-                <p className="mt-2 text-sm text-[#8B4513] italic">
-                  A preview of your adventure that any wandering soul may glimpse
-                </p>
-              </div>
+                <div className="bg-[#deb887] p-6 rounded-lg border-2 border-[#8B4513]">
+                  <label htmlFor="description" className="block text-lg font-serif font-bold text-[#8B4513] mb-2">
+                    📜 The Hook
+                  </label>
+                  <textarea
+                      id="description"
+                      name="description"
+                      value={form.description}
+                      onChange={handleChange}
+                      required
+                      rows={3}
+                      className="w-full bg-[#f4e4bc] border-2 border-[#8B4513] rounded-lg text-[#2c1810] placeholder-[#8B4513]/60 focus:ring-2 focus:ring-[#8B4513] p-3 text-lg"
+                      placeholder="Draw in fellow adventurers with a compelling introduction..."
+                  />
+                  <p className="mt-2 text-sm text-[#8B4513] italic">
+                    A preview of your adventure that any wandering soul may glimpse
+                  </p>
+                </div>
 
-              <div className="bg-[#deb887] p-6 rounded-lg border-2 border-[#8B4513]">
-                <label htmlFor="content" className="block text-lg font-serif font-bold text-[#8B4513] mb-2">
-                  📖 The Chronicle
-                </label>
-                <textarea
-                  id="content"
-                  name="content"
-                  value={form.content}
-                  onChange={handleChange}
-                  required
-                  rows={10}
-                  className="w-full bg-[#f4e4bc] border-2 border-[#8B4513] rounded-lg text-[#2c1810] placeholder-[#8B4513]/60 focus:ring-2 focus:ring-[#8B4513] p-3 text-lg"
-                  placeholder="Unfold your epic tale in great detail..."
-                />
-                <p className="mt-2 text-sm text-[#8B4513] italic">
-                  The full saga - for the eyes of fellow adventurers only
-                </p>
-              </div>
+                <div className="bg-[#deb887] p-6 rounded-lg border-2 border-[#8B4513]">
+                  <label htmlFor="content" className="block text-lg font-serif font-bold text-[#8B4513] mb-2">
+                    📖 The Chronicle
+                  </label>
+                  <textarea
+                      id="content"
+                      name="content"
+                      value={form.content}
+                      onChange={handleChange}
+                      required
+                      rows={10}
+                      className="w-full bg-[#f4e4bc] border-2 border-[#8B4513] rounded-lg text-[#2c1810] placeholder-[#8B4513]/60 focus:ring-2 focus:ring-[#8B4513] p-3 text-lg"
+                      placeholder="Unfold your epic tale in great detail..."
+                  />
+                  <p className="mt-2 text-sm text-[#8B4513] italic">
+                    The full saga - for the eyes of fellow adventurers only
+                  </p>
+                </div>
 
-              <div className="flex justify-between pt-6 border-t-4 border-[#8B4513] mt-8">
-                <Button 
-                  type="button" 
-                  onClick={() => navigate(-1)}
-                  className="bg-[#a65d37] text-[#f4e4bc] hover:bg-[#8B4513] font-bold px-6 py-3 rounded shadow-[4px_4px_0_#000] border-2 border-[#f4e4bc]"
-                >
-                  ← Abandon Quest
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="bg-[#2c1810] text-[#f4e4bc] hover:bg-[#1a0f09] font-bold px-8 py-3 rounded shadow-[4px_4px_0_#000] border-2 border-[#f4e4bc] disabled:opacity-50"
-                >
-                  {isSubmitting ? '✒️ Inscribing...' : '✨ Inscribe Tale'}
-                </Button>
-              </div>
+                <div className="flex justify-left align-middle bg-[#deb887] p-6 rounded-lg border-2 border-[#8B4513] accent-[#8B4513]">
+                  <Input
+                      id="isHidden"
+                      name="isHidden"
+                      type="checkbox"
+                      checked={form.isHidden}
+                      onChange={handleChange}
+                      required
+                      className="w-8 h-8 bg-[#f4e4bc] border-2 border-[#8B4513] text-[#2c1810] placeholder-[#8B4513]/60 focus:ring-2 focus:ring-[#8B4513] text-lg p-3"
+                  />
+                  <label htmlFor="isHidden" className="pl-4 w-full block text-lg font-serif font-bold text-[#8B4513] mb-2">
+                    🪄 Make my campaign disappear from unknown travellers
+                  </label>
+                </div>
+                <div className="flex justify-between pt-6 border-t-4 border-[#8B4513] mt-8">
+                  <Button
+                      type="button"
+                      onClick={() => navigate(-1)}
+                      className="bg-[#a65d37] text-[#f4e4bc] hover:bg-[#8B4513] font-bold px-6 py-3 rounded shadow-[4px_4px_0_#000] border-2 border-[#f4e4bc]"
+                  >
+                    ← Abandon Quest
+                  </Button>
+                  <Button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="bg-[#2c1810] text-[#f4e4bc] hover:bg-[#1a0f09] font-bold px-8 py-3 rounded shadow-[4px_4px_0_#000] border-2 border-[#f4e4bc] disabled:opacity-50"
+                  >
+                    {isSubmitting ? '✒️ Inscribing...' : '✨ Inscribe Tale'}
+                  </Button>
+                </div>
               </div>
             </form>
           </CardContent>

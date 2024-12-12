@@ -55,11 +55,6 @@ export const campaignController = {
                 return res.status(401).json({error: 'Unauthorized access to hidden campaign'});
             }
 
-            // If the campaign is not by the logged-in user and is hidden
-            if (campaign.isHidden && campaign.user.toString() !== userId) {
-                return res.status(403).json({error: 'Access denied to hidden campaign'});
-            }
-
             const upvoteCount = campaign.upvotes.length;
             const isUpvoted = userId ? campaign.upvotes.some(id => id.toString() === userId) : false;
 
