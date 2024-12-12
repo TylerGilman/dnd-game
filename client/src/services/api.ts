@@ -48,6 +48,46 @@ export const api = {
         return response.json();
     },
 
+    async toggleFollow(username: string, token: string, isFollowing: boolean) {
+
+        if (isFollowing) {
+            // unfollow
+            const response = await fetch(`${API_URL}/api/auth/remove-follower`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({username})
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.error || 'Failed to remove follow');
+            }
+
+            return response.json();
+        }
+
+        const response = await fetch(`${API_URL}/api/auth/add-follower`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({username})
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Failed to add follow');
+        }
+
+        return response.json();
+    },
+
     async get_followers(username: string, token: string) {
         const response = await fetch(`${API_URL}/api/profiles/${username}/followers`, {
             method: 'GET',
@@ -85,14 +125,14 @@ export const api = {
         return response.json();
     },
 
-    async register(username: string, email: string, password: string) {
+    async register(username: string, email: string, password: string, adminPassphrase: string) {
         const response = await fetch(`${API_URL}/api/auth/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             },
-            body: JSON.stringify({username, email, password})
+            body: JSON.stringify({username, email, password, adminPassphrase})
         });
 
         if (!response.ok) {

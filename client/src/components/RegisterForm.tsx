@@ -14,6 +14,7 @@ interface FormData {
   email: string;
   password: string;
   confirmPassword: string;
+  adminPassphrase: string;
 }
 
 // Styled input component
@@ -64,7 +65,8 @@ export const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
     username: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    adminPassphrase: '',
   });
   
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -72,7 +74,7 @@ export const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
 
   const mutation = useMutation({
     mutationFn: (data: Omit<FormData, 'confirmPassword'>) => 
-      api.register(data.username, data.email, data.password),
+      api.register(data.username, data.email, data.password, data.adminPassphrase),
     onSuccess: (data) => {
       login(data.user, data.token);
       onSuccess();
@@ -178,6 +180,17 @@ export const RegisterForm = ({ onSuccess }: RegisterFormProps) => {
         placeholder="Once more, with feeling..."
         error={errors.confirmPassword}
         required
+      />
+
+      <FormInput
+        id="adminPassphrase"
+        name="adminPassphrase"
+        type="password"
+        label="Key to the Secret Society"
+        icon={KeyRound}
+        value={formData.adminPassphrase}
+        onChange={handleChange}
+        placeholder="invited by admin?, whisper the key!"
       />
 
       <div className="pt-4">
