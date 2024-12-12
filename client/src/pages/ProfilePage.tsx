@@ -31,10 +31,10 @@ interface Profile {
 }
 
 interface Follower {
-  username: string;
-  _id: string;
-  is_following: boolean;
-  is_follower: boolean;
+    username: string;
+    _id: string;
+    is_following: boolean;
+    is_follower: boolean;
 }
 
 
@@ -83,6 +83,33 @@ export const ProfilePage = () => {
         } finally {
             setShowDeleteDialog(false);
             setCampaignToDelete(null);
+        }
+    };
+
+    const handleFollow = async (target_username: string) => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                showNotification('You must be logged in to follow/unfollow', 'error');
+                return;
+            }
+
+            await api.toggleFollow(target_username, token, profile?.is_following);
+
+            window.location.reload();
+
+            showNotification(
+                profile?.is_following
+                    ? 'following'
+                    : 'unfollowing',
+                'success'
+            );
+
+
+
+        } catch (error) {
+            console.error('Failed to toggle follow:', error);
+            showNotification('Failed to update follow', 'error');
         }
     };
 
@@ -175,6 +202,7 @@ export const ProfilePage = () => {
                                 {user?.username !== profile.username && (
                                     <Button
                                         className="bg-[#8B4513] text-[#f4e4bc] hover:bg-[#6b3410] font-bold px-4 py-2 rounded shadow-[4px_4px_0_#000] border-2 border-[#f4e4bc]"
+                                        onClick={() => handleFollow(profile.username)}
                                     >
                                         {profile.is_following ? 'Unfollow' : 'Follow'} Adventurer
                                     </Button>
